@@ -8,6 +8,7 @@ import { fetchPost, createPost, updatePost, publishPost, unpublishPost, restoreV
 import HistoryPanel from '../components/HistoryPanel';
 import debounce from 'lodash/debounce';
 import type { Post, PostVersion } from '../types';
+import Logo from '../components/Logo';
 
 const EditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +19,12 @@ const EditorPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+  const [isAutosaveEnabled, setIsAutosaveEnabled] = useState(false);
+  const isAutosaveEnabledRef = useRef(isAutosaveEnabled);
+
+  useEffect(() => {
+    isAutosaveEnabledRef.current = isAutosaveEnabled;
+  }, [isAutosaveEnabled]);
   
   // Custom UX states
   const [saveStatus, setSaveStatus] = useState<'saved' | 'unsaved' | 'saving' | 'error'>('saved');
@@ -72,7 +79,9 @@ const EditorPage: React.FC = () => {
     onUpdate: () => {
       if (!isReadOnly && !previewVersion) {
         setSaveStatus('unsaved');
-        debouncedSave();
+        if (isAutosaveEnabledRef.current) {
+          debouncedSave();
+        }
       }
     },
   });
@@ -126,6 +135,12 @@ const EditorPage: React.FC = () => {
     }, 2000),
     [saveMutation]
   );
+
+  useEffect(() => {
+    if (isAutosaveEnabled && saveStatus === 'unsaved') {
+      debouncedSave();
+    }
+  }, [isAutosaveEnabled, saveStatus, debouncedSave]);
 
   const handleManualSave = () => {
     debouncedSave.cancel();
@@ -223,7 +238,9 @@ const EditorPage: React.FC = () => {
     if (!isReadOnly && !previewVersion) {
       setTitle(e.target.value);
       setSaveStatus('unsaved');
-      debouncedSave();
+      if (isAutosaveEnabled) {
+        debouncedSave();
+      }
     }
   };
 
@@ -231,7 +248,9 @@ const EditorPage: React.FC = () => {
     if (!isReadOnly && !previewVersion) {
       setExcerpt(e.target.value);
       setSaveStatus('unsaved');
-      debouncedSave();
+      if (isAutosaveEnabled) {
+        debouncedSave();
+      }
     }
   };
 
@@ -264,6 +283,7 @@ const EditorPage: React.FC = () => {
           </Link>
           <div className="h-6 w-[1px] bg-outline-variant"></div>
           <div className="flex items-center gap-xs">
+            <Logo className="size-4 text-primary mr-1" />
             <span className="text-[13px] font-bold text-primary uppercase tracking-tight">ReDraft Editor</span>
             <span className="text-[10px] font-mono text-on-surface-variant uppercase bg-surface-container px-1.5 rounded tracking-widest">
               {isNew ? 'New Draft' : `v${post?.currentVersion?.versionNumber || '1.0'}`}
@@ -272,36 +292,63 @@ const EditorPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-md">
-          {/* Autosave Status Tracker */}
-          <div 
-            onClick={saveStatus === 'unsaved' ? handleManualSave : undefined}
-            className={`flex items-center gap-2 text-[11px] font-mono text-on-surface-variant uppercase tracking-widest mr-md select-none ${saveStatus === 'unsaved' ? 'cursor-pointer hover:text-primary transition-all' : ''}`}
-            title={saveStatus === 'unsaved' ? "Unsaved changes. Click to save now." : ""}
-          >
-            {saveStatus === 'saving' && (
-              <>
-                <span className="material-symbols-outlined animate-spin text-primary text-[14px]">progress_activity</span>
-                <span>Saving Draft...</span>
-              </>
-            )}
-            {saveStatus === 'saved' && (
-              <>
-                <span className="material-symbols-outlined text-[14px] text-green-600">cloud_done</span>
-                <span>All Changes Saved</span>
-              </>
-            )}
-            {saveStatus === 'unsaved' && (
-              <>
-                <span className="material-symbols-outlined text-[14px] text-amber-600">pending</span>
-                <span className="hover:underline">Unsaved Changes</span>
-              </>
-            )}
-            {saveStatus === 'error' && (
-              <>
-                <span className="material-symbols-outlined text-[14px] text-red-600">error</span>
-                <span>Save Failed</span>
-              </>
-            )}
+          {/* Save & Autosave Controls */}
+          <div className="flex items-center gap-sm mr-md border-r border-outline-variant/60 pr-md">
+            {/* Status Indicator */}
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-on-surface-variant uppercase tracking-widest mr-xs select-none">
+              {saveStatus === 'saving' && (
+                <>
+                  <span className="material-symbols-outlined animate-spin text-primary text-[14px]">progress_activity</span>
+                  <span>Saving...</span>
+                </>
+              )}
+              {saveStatus === 'saved' && (
+                <>
+                  <span className="material-symbols-outlined text-[14px] text-green-600">cloud_done</span>
+                  <span>Saved</span>
+                </>
+              )}
+              {saveStatus === 'unsaved' && (
+                <>
+                  <span className="material-symbols-outlined text-[14px] text-amber-600">pending</span>
+                  <span>Unsaved</span>
+                </>
+              )}
+              {saveStatus === 'error' && (
+                <>
+                  <span className="material-symbols-outlined text-[14px] text-red-600">error</span>
+                  <span>Failed</span>
+                </>
+              )}
+            </div>
+
+            {/* Autosave Toggle */}
+            <button
+              onClick={() => setIsAutosaveEnabled(!isAutosaveEnabled)}
+              disabled={!!previewVersion}
+              className={`flex items-center gap-xs px-2.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all border select-none cursor-pointer ${
+                isAutosaveEnabled 
+                  ? 'bg-green-600/10 text-green-600 border-green-600/30' 
+                  : 'text-on-surface-variant hover:bg-surface-container border-outline-variant/60'
+              }`}
+              title={isAutosaveEnabled ? "Disable automatic saving" : "Enable automatic saving"}
+            >
+              <span className="material-symbols-outlined text-[18px] leading-none">
+                {isAutosaveEnabled ? 'toggle_on' : 'toggle_off'}
+              </span>
+              <span>Autosave</span>
+            </button>
+
+            {/* Manual Save Button */}
+            <button
+              onClick={handleManualSave}
+              disabled={saveStatus === 'saving' || !!previewVersion || saveStatus === 'saved'}
+              className="flex items-center gap-xs px-3 py-1.5 bg-primary text-on-primary rounded-lg text-[12px] font-bold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm"
+              title="Save current draft"
+            >
+              <span className="material-symbols-outlined text-[18px]">save</span>
+              <span>Save</span>
+            </button>
           </div>
           
           <div className="flex items-center gap-sm">
@@ -346,26 +393,6 @@ const EditorPage: React.FC = () => {
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Toolbar */}
-        <aside className="w-16 border-r border-outline-variant bg-surface-container-low flex flex-col items-center py-md gap-lg shrink-0">
-          <button className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all" title="Text Formatting">
-            <span className="material-symbols-outlined">format_size</span>
-          </button>
-          <button className="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-all" title="Insert Media">
-            <span className="material-symbols-outlined">image</span>
-          </button>
-          <button className="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-all" title="Citations">
-            <span className="material-symbols-outlined">format_quote</span>
-          </button>
-          <button className="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-all" title="Collaboration">
-            <span className="material-symbols-outlined">group</span>
-          </button>
-          <div className="mt-auto flex flex-col items-center gap-lg">
-            <button className="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-all" title="Settings">
-              <span className="material-symbols-outlined">settings</span>
-            </button>
-          </div>
-        </aside>
 
         {/* Writing Canvas */}
         <main className="flex-1 overflow-y-auto bg-surface p-md md:p-xl custom-scrollbar relative">

@@ -9,6 +9,7 @@ import BlogPage from './pages/BlogPage';
 import PostPage from './pages/PostPage';
 import DiffPage from './pages/DiffPage';
 import AuthGuard from './components/AuthGuard';
+import LandingPage from './pages/LandingPage';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           {/* Public routes */}
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/blog" element={<BlogPage />} />
@@ -49,11 +51,8 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Default redirect for root */}
-          <Route path="/" element={<Navigate to="/blog" replace />} />
-          
           {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to="/blog" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </QueryClientProvider>

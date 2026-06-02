@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchPublicPostBySlug } from '../api/posts';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Logo from '../components/Logo';
 
 const PostPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,7 +29,10 @@ const PostPage: React.FC = () => {
         <header className="bg-surface border-b border-outline-variant fixed top-0 w-full z-50 h-16">
           <div className="flex justify-between items-center w-full px-sm md:px-lg h-16 max-w-7xl mx-auto">
             <div className="flex items-center gap-md">
-            <span className="text-2xl font-bold text-primary tracking-tight">ReDraft</span>
+              <div className="flex items-center gap-xs">
+                <Logo className="size-6 text-primary" />
+                <span className="text-2xl font-bold text-primary tracking-tight">ReDraft</span>
+              </div>
               <nav className="hidden md:flex gap-sm items-center">
                 <div className="w-20 h-4 skeleton rounded"></div>
                 <div className="w-24 h-4 skeleton rounded"></div>
@@ -78,7 +82,10 @@ const PostPage: React.FC = () => {
       <div className="font-hanken text-on-surface bg-background min-h-screen flex flex-col">
         <header className="fixed top-0 left-0 right-0 z-50 bg-surface border-b border-outline-variant h-16">
           <div className="flex justify-between items-center w-full px-sm md:px-lg h-16 max-w-7xl mx-auto">
-            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
+            <Link to="/blog" className="flex items-center gap-xs text-2xl font-bold text-primary tracking-tight">
+              <Logo className="size-6 text-primary" />
+              <span>ReDraft</span>
+            </Link>
           </div>
         </header>
         <main className="flex-1 p-md md:p-xl flex items-center justify-center pt-16">
@@ -226,12 +233,8 @@ const PostPage: React.FC = () => {
       {/* Footer Meta */}
       <footer className="w-full bg-surface-container-high py-12 px-6 mt-auto">
         <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-4 text-primary">
-            <div className="size-6">
-              <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
-              </svg>
-            </div>
+          <div className="flex items-center gap-xs text-primary">
+            <Logo className="size-6 text-primary" />
             <h2 className="text-lg font-bold leading-tight tracking-tight">ReDraft Premium</h2>
           </div>
           <div className="flex gap-8 text-sm text-on-surface-variant font-semibold uppercase tracking-wider">

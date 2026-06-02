@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { fetchPublicPosts, searchPosts } from '../api/posts';
 import { useAuthStore } from '../store/authStore';
+import Logo from '../components/Logo';
 
 const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +35,10 @@ const BlogPage: React.FC = () => {
       <nav className="bg-surface border-b border-outline-variant w-full h-16 z-50 sticky top-0">
         <div className="flex justify-between items-center w-full px-sm md:px-lg h-full max-w-7xl mx-auto">
           <div className="flex items-center gap-md">
-            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
+            <Link to="/blog" className="flex items-center gap-xs text-2xl font-bold text-primary tracking-tight">
+              <Logo className="size-6 text-primary" />
+              <span>ReDraft</span>
+            </Link>
             <div className="hidden md:flex gap-md items-center">
               <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
               <Link to="/blog" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider">Browse</Link>
@@ -189,7 +193,10 @@ const BlogPage: React.FC = () => {
       <footer className="bg-surface-container-lowest border-t border-outline-variant w-full">
         <div className="w-full py-lg px-sm md:px-xl flex flex-col md:flex-row justify-between items-center gap-sm max-w-7xl mx-auto">
           <div className="flex flex-col items-center md:items-start gap-xs">
-            <span className="text-[13px] font-bold text-primary uppercase tracking-tighter">ReDraft</span>
+            <div className="flex items-center gap-xs">
+              <Logo className="size-4 text-primary" />
+              <span className="text-[13px] font-bold text-primary uppercase tracking-tighter">ReDraft</span>
+            </div>
             <p className="text-[13px] text-on-surface-variant">© 2024 ReDraft Publishing. Built for permanence.</p>
           </div>
           <div className="flex gap-md">

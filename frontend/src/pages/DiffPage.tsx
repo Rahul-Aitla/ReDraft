@@ -2,6 +2,7 @@ import React, { useState, useRef, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchVersions, fetchVersion, fetchDiff } from '../api/posts';
+import Logo from '../components/Logo';
 
 const DiffPage: React.FC = () => {
   const { id, v1, v2 } = useParams<{ id: string; v1: string; v2: string }>();
@@ -59,7 +60,10 @@ const DiffPage: React.FC = () => {
       {/* TopNavBar */}
       <nav className="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-lg h-16 shrink-0 z-50">
         <div className="flex items-center gap-md">
-          <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
+          <Link to="/blog" className="flex items-center gap-xs text-2xl font-bold text-primary tracking-tight">
+            <Logo className="size-6 text-primary" />
+            <span>ReDraft</span>
+          </Link>
           <div className="hidden md:flex gap-md items-center h-full ml-lg">
             <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
             <Link to={`/editor/${id}`} className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Editor</Link>
