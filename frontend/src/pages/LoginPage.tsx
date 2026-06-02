@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { login as loginApi } from '../api/auth';
+import { useQueryClient } from '@tanstack/react-query';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const LoginPage: React.FC = () => {
   
   const login = useAuthStore((s) => s.login);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +22,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const { token, user } = await loginApi({ email, password });
+      queryClient.clear();
       login(token, user);
       navigate('/dashboard');
     } catch (err: any) {

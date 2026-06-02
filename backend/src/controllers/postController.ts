@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { Op } from 'sequelize';
 import { Post, PostVersion } from '../models';
 import * as postService from '../services/postService';
 import * as diffService from '../services/diffService';
@@ -230,10 +229,14 @@ export async function restoreVersion(
       versionNumber: nextVersionNumber,
     });
 
-    // Update post's current version
-    await post.update({ currentVersionId: newVersion.id });
+    // Update post's current version and make it a draft if it was published
+    const postUpdates: any = { currentVersionId: newVersion.id };
+    if (post.status === 'published') {
+      postUpdates.status = 'draft';
+    }
+    await post.update(postUpdates);
 
-    res.json({ post, version: newVersion });
+    res.json({ post: await post.reload({ include: [{ association: 'currentVersion' }] }), version: newVersion });
   } catch (err) {
     next(err);
   }
@@ -265,19 +268,10 @@ export async function getPublishedPost(req: Request<{ slug: string }>, res: Resp
 }
 
 // List published posts for blog
-export async function getPublishedPosts(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getPublishedPosts(_req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const userId = req.user?.userId;
-    
     const posts = await Post.findAll({
-      where: userId 
-        ? {
-            [Op.or]: [
-              { status: 'published' },
-              { authorId: userId }
-            ]
-          }
-        : { status: 'published' },
+      where: { status: 'published' },
       include: [
         { association: 'currentVersion' },
         { association: 'author', attributes: ['id', 'name', 'email'] }

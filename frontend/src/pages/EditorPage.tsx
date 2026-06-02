@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
-import { fetchPost, createPost, updatePost, publishPost, restoreVersion } from '../api/posts';
+import { fetchPost, createPost, updatePost, publishPost, unpublishPost, restoreVersion } from '../api/posts';
 import HistoryPanel from '../components/HistoryPanel';
 import debounce from 'lodash/debounce';
 import type { Post, PostVersion } from '../types';
@@ -46,6 +46,18 @@ const EditorPage: React.FC = () => {
     },
     onError: () => {
       showToast('Failed to publish post.');
+    }
+  });
+
+  const unpublishMutation = useMutation({
+    mutationFn: () => unpublishPost(id!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['post', id] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      showToast('Post unpublished successfully!');
+    },
+    onError: () => {
+      showToast('Failed to unpublish post.');
     }
   });
 
@@ -301,15 +313,29 @@ const EditorPage: React.FC = () => {
               <span className="hidden sm:inline">Timeline</span>
             </button>
             <button 
-              onClick={() => publishMutation.mutate()}
-              disabled={isNew || publishMutation.isPending || post?.status === 'published' || !!previewVersion}
-              className="flex items-center gap-xs px-md py-2 bg-primary-container text-on-primary-container rounded-lg text-[13px] font-bold hover:opacity-90 transition-all disabled:opacity-50"
+              onClick={() => post?.status === 'published' ? unpublishMutation.mutate() : publishMutation.mutate()}
+              disabled={isNew || publishMutation.isPending || unpublishMutation.isPending || !!previewVersion}
+              className={`flex items-center gap-xs px-md py-2 rounded-lg text-[13px] font-bold hover:opacity-90 transition-all disabled:opacity-50 ${
+                post?.status === 'published' 
+                  ? 'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80' 
+                  : 'bg-primary-container text-on-primary-container hover:bg-primary-container/80'
+              }`}
             >
               <span className="material-symbols-outlined text-[20px]">
-                {publishMutation.isPending ? 'progress_activity' : post?.status === 'published' ? 'check_circle' : 'publish'}
+                {publishMutation.isPending || unpublishMutation.isPending 
+                  ? 'progress_activity' 
+                  : post?.status === 'published' 
+                    ? 'visibility_off' 
+                    : 'publish'}
               </span>
               <span className="hidden sm:inline">
-                {publishMutation.isPending ? 'Publishing...' : post?.status === 'published' ? 'Published' : 'Publish'}
+                {publishMutation.isPending 
+                  ? 'Publishing...' 
+                  : unpublishMutation.isPending 
+                    ? 'Unpublishing...' 
+                    : post?.status === 'published' 
+                      ? 'Unpublish' 
+                      : 'Publish'}
               </span>
             </button>
             <div className="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-[11px] font-bold">

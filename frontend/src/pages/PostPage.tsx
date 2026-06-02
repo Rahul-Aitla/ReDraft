@@ -39,44 +39,34 @@ const PostPage: React.FC = () => {
         </header>
 
         <main className="pt-24 min-h-screen pb-20">
-          <div className="max-w-[1000px] mx-auto px-sm md:px-lg flex flex-col md:flex-row gap-lg">
-            <div className="flex-1 max-w-[720px] mx-auto">
-              <div className="flex items-center gap-xs mb-lg">
-                <div className="w-4 h-4 skeleton rounded-full"></div>
-                <div className="w-24 h-4 skeleton rounded"></div>
-              </div>
-              <header className="mb-xl">
-                <div className="w-full h-12 skeleton rounded mb-sm"></div>
-                <div className="w-3/4 h-12 skeleton rounded mb-lg"></div>
-                <div className="flex items-center gap-md border-y border-outline-variant/30 py-md">
-                  <div className="w-10 h-10 skeleton rounded-full"></div>
-                  <div className="space-y-2">
-                    <div className="w-32 h-4 skeleton rounded"></div>
-                    <div className="flex gap-sm">
-                      <div className="w-20 h-3 skeleton rounded"></div>
-                      <div className="w-16 h-3 skeleton rounded"></div>
-                    </div>
+          <div className="max-w-[720px] mx-auto px-sm md:px-lg">
+            <div className="flex items-center gap-xs mb-lg">
+              <div className="w-4 h-4 skeleton rounded-full"></div>
+              <div className="w-24 h-4 skeleton rounded"></div>
+            </div>
+            <header className="mb-xl">
+              <div className="w-full h-12 skeleton rounded mb-sm"></div>
+              <div className="w-3/4 h-12 skeleton rounded mb-lg"></div>
+              <div className="flex items-center gap-md border-y border-outline-variant/30 py-md">
+                <div className="w-10 h-10 skeleton rounded-full"></div>
+                <div className="space-y-2">
+                  <div className="w-32 h-4 skeleton rounded"></div>
+                  <div className="flex gap-sm">
+                    <div className="w-20 h-3 skeleton rounded"></div>
+                    <div className="w-16 h-3 skeleton rounded"></div>
                   </div>
                 </div>
-              </header>
-              <div className="w-full aspect-video skeleton rounded-xl mb-xl"></div>
-              <article className="space-y-lg">
-                <div className="space-y-xs">
-                  <div className="w-full h-4 skeleton rounded"></div>
-                  <div className="w-full h-4 skeleton rounded"></div>
-                  <div className="w-full h-4 skeleton rounded"></div>
-                  <div className="w-5/6 h-4 skeleton rounded"></div>
-                </div>
-              </article>
-            </div>
-            <aside className="hidden xl:block w-48 sticky top-24 h-fit">
-              <div className="w-32 h-4 skeleton rounded mb-md"></div>
-              <div className="space-y-sm">
-                <div className="w-full h-3 skeleton rounded"></div>
-                <div className="w-10/12 h-3 skeleton rounded"></div>
-                <div className="w-11/12 h-3 skeleton rounded"></div>
               </div>
-            </aside>
+            </header>
+            <div className="w-full aspect-video skeleton rounded-xl mb-xl"></div>
+            <article className="space-y-lg">
+              <div className="space-y-xs">
+                <div className="w-full h-4 skeleton rounded"></div>
+                <div className="w-full h-4 skeleton rounded"></div>
+                <div className="w-full h-4 skeleton rounded"></div>
+                <div className="w-5/6 h-4 skeleton rounded"></div>
+              </div>
+            </article>
           </div>
         </main>
       </div>
@@ -149,22 +139,6 @@ const PostPage: React.FC = () => {
       </nav>
 
       <main className="relative flex flex-col items-center pt-xl pb-xl px-4 flex-grow">
-        {/* Floating Table of Contents */}
-        <aside className="hidden xl:block fixed left-[calc(50%-600px)] top-40 w-[280px]">
-          <div className="flex flex-col gap-6">
-            <h4 className="text-[13px] font-semibold text-on-surface-variant uppercase tracking-widest">In this article</h4>
-            <nav className="flex flex-col border-l border-outline-variant">
-              <a className="pl-4 py-2 text-sm transition-all hover:bg-surface-container text-primary font-bold border-l-2 border-primary" href="#">Introduction</a>
-              <a className="pl-4 py-2 text-sm text-on-surface-variant transition-all hover:bg-surface-container border-l-2 border-transparent" href="#">The Aesthetic Turn</a>
-              <a className="pl-4 py-2 text-sm text-on-surface-variant transition-all hover:bg-surface-container border-l-2 border-transparent" href="#">Cognitive Load</a>
-            </nav>
-            <div className="mt-8 p-4 bg-surface-container-low rounded-lg border border-outline-variant">
-              <p className="text-[13px] font-semibold text-primary mb-2 uppercase tracking-wider">Reading Time</p>
-              <p className="font-mono text-lg">8 MINS</p>
-            </div>
-          </div>
-        </aside>
-
         {/* Main Article Container */}
         <article className="max-w-[720px] w-full bg-surface-container-lowest shadow-[0_40px_100px_-20px_rgba(0,32,69,0.02)] border border-outline-variant rounded-xl overflow-hidden">
           {/* Hero Header */}

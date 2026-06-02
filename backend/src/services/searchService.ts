@@ -3,7 +3,7 @@ import { sequelize } from '../config/database';
 import type { SearchResult } from '../types';
 import { AppError } from '../middleware/errorHandler';
 
-export async function searchPosts(query: string, userId?: string): Promise<SearchResult[]> {
+export async function searchPosts(query: string, _userId?: string): Promise<SearchResult[]> {
   if (!query || query.trim().length === 0) {
     throw new AppError(400, 'EMPTY_QUERY', 'Search query cannot be empty');
   }
@@ -19,7 +19,7 @@ export async function searchPosts(query: string, userId?: string): Promise<Searc
         ts_rank(pv.search_vector, websearch_to_tsquery('english', :query)) AS rank
        FROM posts p
        JOIN post_versions pv ON p.current_version_id = pv.id
-       WHERE (p.status = 'published' ${userId ? 'OR p.author_id = :userId' : ''})
+       WHERE (p.status = 'published')
          AND (pv.search_vector @@ websearch_to_tsquery('english', :query)
               OR pv.title ILIKE :likeQuery)
        ORDER BY rank DESC, p.created_at DESC
@@ -27,8 +27,7 @@ export async function searchPosts(query: string, userId?: string): Promise<Searc
       {
         replacements: { 
           query,
-          likeQuery: `%${query}%`,
-          userId
+          likeQuery: `%${query}%`
         },
         type: QueryTypes.SELECT,
       }

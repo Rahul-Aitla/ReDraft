@@ -95,6 +95,11 @@ export async function updatePost(
 
     // Update post's current version
     await post.update({ currentVersionId: version.id });
+
+    // If the post is published, any edits automatically make it a draft
+    if (post.status === 'published') {
+      updates.status = 'draft';
+    }
   }
 
   // Update status and publishedAt if provided

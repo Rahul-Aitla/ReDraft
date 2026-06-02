@@ -29,6 +29,7 @@ const DashboardPage: React.FC = () => {
   });
 
   const handleLogout = () => {
+    queryClient.clear();
     logout();
     navigate('/login');
   };
