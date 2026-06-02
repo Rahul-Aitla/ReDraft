@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --font-hanken: "Hanken Grotesk", sans-serif;
+  --font-serif: "Source Serif 4", serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* EverDraft Color Palette */
+  --color-primary: #002045;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1a365d;
+  --color-on-primary-container: #86a0cd;
+
+  --color-secondary: #595f66;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #dde3eb;
+  --color-on-secondary-container: #5f656c;
+
+  --color-tertiary: #172131;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #2c3647;
+  --color-on-tertiary-container: #959fb3;
+
+  --color-surface: #f7f9fb;
+  --color-on-surface: #191c1e;
+  --color-surface-variant: #e0e3e5;
+  --color-on-surface-variant: #43474e;
+
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container: #eceef0;
+  --color-surface-container-high: #e6e8ea;
+  --color-surface-container-highest: #e0e3e5;
+
+  --color-outline: #74777f;
+  --color-outline-variant: #c4c6cf;
+  --color-background: #f7f9fb;
+  --color-on-background: #191c1e;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* Custom Radii */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* Spacing aliases */
+  --spacing-base: 4px;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2.5rem;
+  --spacing-xl: 4rem;
+}
+
+:root {
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-hanken);
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-surface-container) 25%, var(--color-surface) 50%, var(--color-surface-container) 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.highlight {
+  background-color: var(--color-primary-fixed);
+  color: var(--color-on-primary-fixed);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.canvas-shadow {
+  box-shadow: 0 40px 100px -20px rgba(0, 32, 69, 0.02);
+}
+
+.writing-surface {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #1a1a1a;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #666;
+}
+
+.ProseMirror h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
