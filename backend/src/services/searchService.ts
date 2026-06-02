@@ -3,17 +3,10 @@ import { sequelize } from '../config/database';
 import type { SearchResult } from '../types';
 import { AppError } from '../middleware/errorHandler';
 
-export async function searchPosts(query: string): Promise<SearchResult[]> {
+export async function searchPosts(query: string, userId?: string): Promise<SearchResult[]> {
   if (!query || query.trim().length === 0) {
     throw new AppError(400, 'EMPTY_QUERY', 'Search query cannot be empty');
   }
-
-  // Prepare the search query for PostgreSQL tsvector
-  // Convert spaces to & for AND operation
-  const searchQuery = query
-    .trim()
-    .split(/\s+/)
-    .join(' & ');
 
   try {
     const results = await sequelize.query(
@@ -22,17 +15,21 @@ export async function searchPosts(query: string): Promise<SearchResult[]> {
         p.slug, 
         pv.title, 
         pv.excerpt,
-        ts_headline('english', pv.content_text, query) AS headline,
-        ts_rank(pv.search_vector, query) AS rank
+        ts_headline('english', pv.content_text, websearch_to_tsquery('english', :query), 'StartSel=<b>, StopSel=</b>, MaxWords=35, MinWords=15, ShortWord=3, MaxFragments=2, FragmentDelimiter=" ... "') AS headline,
+        ts_rank(pv.search_vector, websearch_to_tsquery('english', :query)) AS rank
        FROM posts p
-       JOIN post_versions pv ON p.current_version_id = pv.id,
-            to_tsquery('english', :query) query
-       WHERE p.status = 'published'
-         AND pv.search_vector @@ query
-       ORDER BY rank DESC
+       JOIN post_versions pv ON p.current_version_id = pv.id
+       WHERE (p.status = 'published' ${userId ? 'OR p.author_id = :userId' : ''})
+         AND (pv.search_vector @@ websearch_to_tsquery('english', :query)
+              OR pv.title ILIKE :likeQuery)
+       ORDER BY rank DESC, p.created_at DESC
        LIMIT 20`,
       {
-        replacements: { query: searchQuery },
+        replacements: { 
+          query,
+          likeQuery: `%${query}%`,
+          userId
+        },
         type: QueryTypes.SELECT,
       }
     );

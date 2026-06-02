@@ -116,6 +116,7 @@ module.exports = {
         content_text: 'Learn the basics of TypeScript and how it can improve your JavaScript development.',
         excerpt: 'An introduction to TypeScript',
         author_id: userId1,
+        version_number: 1,
         created_at: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000),
       },
       {
@@ -139,6 +140,7 @@ module.exports = {
         content_text: 'Learn the basics of TypeScript and how it can dramatically improve your JavaScript development workflow.',
         excerpt: 'An introduction to TypeScript with practical examples',
         author_id: userId1,
+        version_number: 2,
         created_at: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
       },
       {
@@ -162,6 +164,7 @@ module.exports = {
         content_text: 'TypeScript is a typed superset of JavaScript that compiles to plain JavaScript. Learn the basics and improve your development experience.',
         excerpt: 'An introduction to TypeScript',
         author_id: userId1,
+        version_number: 3,
         created_at: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -185,6 +188,7 @@ module.exports = {
         content_text: 'Discover advanced techniques and tricks to optimize your PostgreSQL queries and database design.',
         excerpt: 'Expert tips for PostgreSQL',
         author_id: userId1,
+        version_number: 1,
         created_at: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
       },
       {
@@ -208,6 +212,7 @@ module.exports = {
         content_text: 'Master advanced PostgreSQL techniques including indexing, query optimization, and window functions to boost your database performance.',
         excerpt: 'Expert tips for PostgreSQL',
         author_id: userId1,
+        version_number: 2,
         created_at: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000),
       },
       {
@@ -231,6 +236,7 @@ module.exports = {
         content_text: 'Build scalable and maintainable REST APIs using Express.js with best practices and patterns.',
         excerpt: 'Guide to REST APIs with Express',
         author_id: userId2,
+        version_number: 1,
         created_at: now,
       },
       {
@@ -254,6 +260,7 @@ module.exports = {
         content_text: 'Exploring the new features in React 19 and how they might change the way we build applications.',
         excerpt: 'Thoughts on React 19',
         author_id: userId1,
+        version_number: 1,
         created_at: now,
       },
       {
@@ -277,6 +284,7 @@ module.exports = {
         content_text: 'I have some great tutorials planned for next month.',
         excerpt: 'Upcoming content',
         author_id: userId2,
+        version_number: 1,
         created_at: now,
       },
     ], { ignoreDuplicates: true });

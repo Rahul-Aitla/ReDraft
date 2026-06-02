@@ -8,6 +8,7 @@ export class Post extends Model {
   declare status: PostStatus;
   declare authorId: string;
   declare currentVersionId: string | null;
+  declare publishedAt: Date | null;
   declare createdAt: Date;
   declare updatedAt: Date;
 }
@@ -42,6 +43,11 @@ export function initPostModel(sequelize: Sequelize): typeof Post {
         type: DataTypes.UUID,
         allowNull: true,
         field: 'current_version_id',
+      },
+      publishedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'published_at',
       },
     },
     {

@@ -16,6 +16,7 @@ export interface Post {
   status: 'draft' | 'published';
   authorId: string;
   currentVersionId: string;
+  publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
   currentVersion?: PostVersion;

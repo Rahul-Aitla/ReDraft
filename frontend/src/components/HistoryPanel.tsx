@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { fetchVersions, fetchDiff, restoreVersion, fetchVersion } from '../api/posts';
-import type { PostVersion } from '../types';
+import type { PostVersion, Post } from '../types';
 
 interface HistoryPanelProps {
   postId: string;
-  onRestore: () => void;
+  onRestore: (post: Post) => void;
+  onSelectPreview?: (version: PostVersion) => void;
 }
 
-const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore }) => {
+const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelectPreview }) => {
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [previewVersion, setPreviewVersion] = useState<PostVersion | null>(null);
   const [showDiff, setShowDiff] = useState(false);
@@ -30,11 +31,10 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore }) => {
 
   const restoreMutation = useMutation({
     mutationFn: (vId: string) => restoreVersion(postId, vId),
-    onSuccess: () => {
+    onSuccess: (data: Post) => {
       queryClient.invalidateQueries({ queryKey: ['post', postId] });
       queryClient.invalidateQueries({ queryKey: ['versions', postId] });
-      onRestore();
-      window.location.reload();
+      onRestore(data);
     },
   });
 
@@ -52,7 +52,11 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore }) => {
 
   const handlePreview = async (vId: string) => {
     const version = await fetchVersion(postId, vId);
-    setPreviewVersion(version);
+    if (onSelectPreview) {
+      onSelectPreview(version);
+    } else {
+      setPreviewVersion(version);
+    }
   };
 
   return (

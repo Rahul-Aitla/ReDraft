@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { fetchPublicPosts, searchPosts } from '../api/posts';
+import { useAuthStore } from '../store/authStore';
 
 const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const token = useAuthStore((s) => s.token);
   
   const { data: posts, isLoading: isPostsLoading } = useQuery({
     queryKey: ['publicPosts'],
@@ -12,7 +14,7 @@ const BlogPage: React.FC = () => {
     enabled: searchQuery.length < 3,
   });
 
-  const { data: searchResults, isLoading: isSearchLoading } = useQuery({
+  const { data: searchResults, isLoading: isSearchLoading, isError: isSearchError } = useQuery({
     queryKey: ['search', searchQuery],
     queryFn: () => searchPosts(searchQuery),
     enabled: searchQuery.length >= 3,
@@ -24,6 +26,7 @@ const BlogPage: React.FC = () => {
 
   const displayPosts = searchQuery.length >= 3 ? searchResults : posts;
   const isLoading = searchQuery.length >= 3 ? isSearchLoading : isPostsLoading;
+  const isError = searchQuery.length >= 3 ? isSearchError : false;
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col font-hanken">
@@ -31,7 +34,7 @@ const BlogPage: React.FC = () => {
       <nav className="bg-surface border-b border-outline-variant w-full h-16 z-50 sticky top-0">
         <div className="flex justify-between items-center w-full px-sm md:px-lg h-full max-w-7xl mx-auto">
           <div className="flex items-center gap-md">
-            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">EverDraft</Link>
+            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
             <div className="hidden md:flex gap-md items-center">
               <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
               <Link to="/blog" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider">Browse</Link>
@@ -49,7 +52,11 @@ const BlogPage: React.FC = () => {
               />
             </div>
             <div className="flex items-center gap-xs">
-              <Link to="/login" className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+              <Link 
+                to={token ? "/dashboard" : "/login"} 
+                className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"
+                title={token ? "Go to Dashboard" : "Sign In"}
+              >
                 <span className="material-symbols-outlined">account_circle</span>
               </Link>
             </div>
@@ -89,6 +96,16 @@ const BlogPage: React.FC = () => {
                   <div className="w-full h-20 skeleton rounded"></div>
                 </div>
               ))
+            ) : isError ? (
+              <div className="mt-xl py-lg border-t border-error/20 flex flex-col items-center text-center bg-error-container/10 rounded-lg">
+                <div className="w-16 h-16 bg-error-container rounded-full flex items-center justify-center mb-md">
+                  <span className="material-symbols-outlined text-error text-[32px]">error</span>
+                </div>
+                <h3 className="text-base font-bold text-error">Search failed</h3>
+                <p className="text-[13px] font-semibold text-on-surface-variant max-w-sm mx-auto mt-2">
+                  There was an error connecting to the search service. Please try again later.
+                </p>
+              </div>
             ) : displayPosts && displayPosts.length > 0 ? (
               displayPosts.map((post: any) => (
                 <article key={post.id} className="p-md bg-surface-container-lowest border border-outline-variant rounded-lg hover:border-primary transition-all group cursor-pointer shadow-sm relative overflow-hidden">
@@ -97,19 +114,25 @@ const BlogPage: React.FC = () => {
                     <div className="flex justify-between items-start">
                       <h2 className="text-2xl font-bold text-primary group-hover:text-primary-container transition-colors leading-tight">
                         {searchQuery.length >= 3 ? (
-                          <span dangerouslySetInnerHTML={{ __html: post.title }} />
+                          <span dangerouslySetInnerHTML={{ 
+                            __html: post.title.replace(
+                              new RegExp(`(${searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split(/\s+/).join('|')})`, 'gi'), 
+                              '<b>$1</b>'
+                            ) 
+                          }} />
                         ) : (
                           post.currentVersion?.title || post.title
                         )}
                       </h2>
-                      <span className="text-[12px] font-mono text-secondary">
-                        V{post.currentVersion?.versionNumber || '1.0'}
-                      </span>
                     </div>
                     <div className="flex items-center gap-xs text-[13px] font-semibold text-secondary">
                       <span>{post.author?.name || 'Author'}</span>
                       <span className="text-[8px]">•</span>
-                      <span>{new Date(post.createdAt || post.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                      <span>
+                        {new Date(post.createdAt || post.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        {' at '}
+                        {new Date(post.createdAt || post.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                     <div className="mt-sm text-[18px] leading-[28px] font-serif text-on-surface-variant line-clamp-3">
                       {searchQuery.length >= 3 ? (
@@ -166,8 +189,8 @@ const BlogPage: React.FC = () => {
       <footer className="bg-surface-container-lowest border-t border-outline-variant w-full">
         <div className="w-full py-lg px-sm md:px-xl flex flex-col md:flex-row justify-between items-center gap-sm max-w-7xl mx-auto">
           <div className="flex flex-col items-center md:items-start gap-xs">
-            <span className="text-[13px] font-bold text-primary uppercase tracking-tighter">EverDraft</span>
-            <p className="text-[13px] text-on-surface-variant">© 2024 EverDraft Publishing. Built for permanence.</p>
+            <span className="text-[13px] font-bold text-primary uppercase tracking-tighter">ReDraft</span>
+            <p className="text-[13px] text-on-surface-variant">© 2024 ReDraft Publishing. Built for permanence.</p>
           </div>
           <div className="flex gap-md">
             <Link className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold" to="#">Terms</Link>

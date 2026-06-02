@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import { Op } from 'sequelize';
 import { Post, PostVersion } from '../models';
 import * as postService from '../services/postService';
 import * as diffService from '../services/diffService';
 import * as searchService from '../services/searchService';
 import { AppError } from '../middleware/errorHandler';
+import { isUUID } from '../utils/validation';
 import type { TipTapDoc } from '../types';
 
 interface CreatePostBody {
@@ -62,6 +64,7 @@ export async function getPost(req: Request<{ id: string }>, res: Response, next:
 export async function updatePost(req: Request<{ id: string }, {}, UpdatePostBody>, res: Response, next: NextFunction): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
 
     const result = await postService.updatePost(req.params.id, req.user.userId, req.body);
     res.json(result);
@@ -74,6 +77,7 @@ export async function updatePost(req: Request<{ id: string }, {}, UpdatePostBody
 export async function publishPost(req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
 
     const post = await postService.publishPost(req.params.id, req.user.userId);
     res.json({ post });
@@ -86,6 +90,7 @@ export async function publishPost(req: Request<{ id: string }>, res: Response, n
 export async function unpublishPost(req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
 
     const post = await postService.unpublishPost(req.params.id, req.user.userId);
     res.json({ post });
@@ -98,6 +103,7 @@ export async function unpublishPost(req: Request<{ id: string }>, res: Response,
 export async function getVersions(req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
 
     const post = await Post.findByPk(req.params.id);
     if (!post) throw new AppError(404, 'POST_NOT_FOUND', 'Post not found');
@@ -109,7 +115,7 @@ export async function getVersions(req: Request<{ id: string }>, res: Response, n
     const versions = await PostVersion.findAll({
       where: { postId: req.params.id },
       order: [['createdAt', 'DESC']],
-      attributes: ['id', 'title', 'excerpt', 'createdAt', 'authorId'],
+      attributes: ['id', 'title', 'excerpt', 'createdAt', 'authorId', 'versionNumber'],
     });
 
     res.json({ versions });
@@ -122,6 +128,8 @@ export async function getVersions(req: Request<{ id: string }>, res: Response, n
 export async function getVersion(req: Request<{ id: string; versionId: string }>, res: Response, next: NextFunction): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
+    if (!isUUID(req.params.versionId)) throw new AppError(400, 'INVALID_ID', 'Invalid version ID format');
 
     const post = await Post.findByPk(req.params.id);
     if (!post) throw new AppError(404, 'POST_NOT_FOUND', 'Post not found');
@@ -152,10 +160,15 @@ export async function getDiff(
 ): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
 
     const { v1, v2 } = req.query;
     if (!v1 || !v2) {
       throw new AppError(400, 'VALIDATION_ERROR', 'Both v1 and v2 version IDs are required');
+    }
+
+    if (!isUUID(v1) || !isUUID(v2)) {
+      throw new AppError(400, 'INVALID_ID', 'Invalid version ID format');
     }
 
     // Verify both versions belong to the user's post
@@ -181,6 +194,8 @@ export async function restoreVersion(
 ): Promise<void> {
   try {
     if (!req.user) throw new AppError(401, 'AUTH_REQUIRED', 'Authentication required');
+    if (!isUUID(req.params.id)) throw new AppError(400, 'INVALID_ID', 'Invalid post ID format');
+    if (!isUUID(req.params.versionId)) throw new AppError(400, 'INVALID_ID', 'Invalid version ID format');
 
     const post = await Post.findByPk(req.params.id);
     if (!post) throw new AppError(404, 'POST_NOT_FOUND', 'Post not found');
@@ -197,6 +212,13 @@ export async function restoreVersion(
       throw new AppError(404, 'VERSION_NOT_FOUND', 'Version not found');
     }
 
+    // Get the latest version number to increment it
+    const latestVersion = await PostVersion.findOne({
+      where: { postId: post.id },
+      order: [['versionNumber', 'DESC']],
+    });
+    const nextVersionNumber = (latestVersion?.versionNumber || 0) + 1;
+
     // Create a new version with the old version's content
     const newVersion = await PostVersion.create({
       postId: post.id,
@@ -205,6 +227,7 @@ export async function restoreVersion(
       contentText: oldVersion.contentText,
       excerpt: oldVersion.excerpt,
       authorId: req.user.userId,
+      versionNumber: nextVersionNumber,
     });
 
     // Update post's current version
@@ -224,7 +247,7 @@ export async function search(req: Request<{}, {}, {}, { q: string }>, res: Respo
       throw new AppError(400, 'VALIDATION_ERROR', 'Search query is required');
     }
 
-    const results = await searchService.searchPosts(q);
+    const results = await searchService.searchPosts(q, req.user?.userId);
     res.json({ results });
   } catch (err) {
     next(err);
@@ -234,7 +257,7 @@ export async function search(req: Request<{}, {}, {}, { q: string }>, res: Respo
 // Get published post by slug
 export async function getPublishedPost(req: Request<{ slug: string }>, res: Response, next: NextFunction): Promise<void> {
   try {
-    const post = await postService.getPostBySlug(req.params.slug);
+    const post = await postService.getPostBySlug(req.params.slug, req.user?.userId);
     res.json({ post });
   } catch (err) {
     next(err);
@@ -242,11 +265,23 @@ export async function getPublishedPost(req: Request<{ slug: string }>, res: Resp
 }
 
 // List published posts for blog
-export async function getPublishedPosts(_req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function getPublishedPosts(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const userId = req.user?.userId;
+    
     const posts = await Post.findAll({
-      where: { status: 'published' },
-      include: [{ association: 'currentVersion' }],
+      where: userId 
+        ? {
+            [Op.or]: [
+              { status: 'published' },
+              { authorId: userId }
+            ]
+          }
+        : { status: 'published' },
+      include: [
+        { association: 'currentVersion' },
+        { association: 'author', attributes: ['id', 'name', 'email'] }
+      ],
       order: [['createdAt', 'DESC']],
     });
 

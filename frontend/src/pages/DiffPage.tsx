@@ -59,7 +59,7 @@ const DiffPage: React.FC = () => {
       {/* TopNavBar */}
       <nav className="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-lg h-16 shrink-0 z-50">
         <div className="flex items-center gap-md">
-          <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">EverDraft</Link>
+          <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
           <div className="hidden md:flex gap-md items-center h-full ml-lg">
             <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
             <Link to={`/editor/${id}`} className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Editor</Link>

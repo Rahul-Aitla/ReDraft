@@ -12,12 +12,12 @@ export const fetchPost = async (id: string) => {
 };
 
 export const createPost = async (payload: { title: string; content: TipTapDoc; excerpt: string }) => {
-  const { data } = await client.post<Post>('/posts', payload);
+  const { data } = await client.post<{ post: Post; version: PostVersion }>('/posts', payload);
   return data;
 };
 
 export const updatePost = async (id: string, payload: { title?: string; content?: TipTapDoc; excerpt?: string }) => {
-  const { data } = await client.patch<Post>(`/posts/${id}`, payload);
+  const { data } = await client.patch<{ post: Post; version: PostVersion | null }>(`/posts/${id}`, payload);
   return data;
 };
 

@@ -9,6 +9,8 @@ export class PostVersion extends Model {
   declare contentText: string;
   declare excerpt: string | null;
   declare authorId: string;
+  declare versionNumber: number;
+  declare searchVector: any;
   declare createdAt: Date;
 }
 
@@ -48,14 +50,28 @@ export function initPostVersionModel(sequelize: Sequelize): typeof PostVersion {
         allowNull: false,
         field: 'author_id',
       },
+      versionNumber: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        field: 'version_number',
+      },
+      searchVector: {
+        type: DataTypes.TSVECTOR,
+        allowNull: true,
+        field: 'search_vector',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+        field: 'created_at',
+      },
     },
     {
       sequelize,
       tableName: 'post_versions',
       underscored: true,
       timestamps: false,
-      createdAt: 'created_at',
-      updatedAt: false,
     }
   );
 

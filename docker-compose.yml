@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: redraft-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: redraft
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: redraft-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/redraft
+      JWT_SECRET: secret_key_for_testing
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    command: >
+      sh -c "npm run db:migrate && npm run db:seed && npm run dev"
+
+  frontend:
+    build: ./frontend
+    container_name: redraft-frontend
+    environment:
+      VITE_API_URL: http://localhost:3001/api
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

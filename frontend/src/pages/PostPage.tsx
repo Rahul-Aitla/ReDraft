@@ -28,7 +28,7 @@ const PostPage: React.FC = () => {
         <header className="bg-surface border-b border-outline-variant fixed top-0 w-full z-50 h-16">
           <div className="flex justify-between items-center w-full px-sm md:px-lg h-16 max-w-7xl mx-auto">
             <div className="flex items-center gap-md">
-              <span className="text-2xl font-bold text-primary tracking-tight">EverDraft</span>
+            <span className="text-2xl font-bold text-primary tracking-tight">ReDraft</span>
               <nav className="hidden md:flex gap-sm items-center">
                 <div className="w-20 h-4 skeleton rounded"></div>
                 <div className="w-24 h-4 skeleton rounded"></div>
@@ -88,7 +88,7 @@ const PostPage: React.FC = () => {
       <div className="font-hanken text-on-surface bg-background min-h-screen flex flex-col">
         <header className="fixed top-0 left-0 right-0 z-50 bg-surface border-b border-outline-variant h-16">
           <div className="flex justify-between items-center w-full px-sm md:px-lg h-16 max-w-7xl mx-auto">
-            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">EverDraft</Link>
+            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
           </div>
         </header>
         <main className="flex-1 p-md md:p-xl flex items-center justify-center pt-16">
@@ -120,7 +120,7 @@ const PostPage: React.FC = () => {
             </div>
             <div className="mt-xl pt-lg border-t border-outline-variant/30">
               <p className="font-mono text-[12px] text-on-surface-variant/50 uppercase tracking-widest">
-                Ref Code: ED-404-UNPUBLISHED
+                Ref Code: RD-404-UNPUBLISHED
               </p>
             </div>
           </div>
@@ -139,7 +139,7 @@ const PostPage: React.FC = () => {
             <span>Back to Editorial</span>
           </Link>
           <div className="flex items-center gap-4">
-            <span className="text-[12px] font-mono text-on-surface-variant uppercase tracking-widest">EverDraft // V2.4.1</span>
+            <span className="text-[12px] font-mono text-on-surface-variant uppercase tracking-widest">ReDraft // V2.4.1</span>
             <div className="h-4 w-[1px] bg-outline-variant"></div>
             <button className="bg-primary text-on-primary px-4 py-1.5 rounded text-[13px] font-semibold hover:bg-primary-container transition-all uppercase tracking-wider">
               Follow Series
@@ -173,6 +173,8 @@ const PostPage: React.FC = () => {
               <span className="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[11px] font-bold rounded uppercase tracking-tighter">Editorial</span>
               <span className="text-[12px] font-mono text-on-surface-variant">
                 {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
+                {' AT '}
+                {new Date(post.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toUpperCase()}
               </span>
             </div>
             <h1 className="text-[48px] font-bold leading-tight tracking-tight text-primary mb-6">
@@ -256,14 +258,14 @@ const PostPage: React.FC = () => {
                 <path clipRule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fillRule="evenodd"></path>
               </svg>
             </div>
-            <h2 className="text-lg font-bold leading-tight tracking-tight">EverDraft Premium</h2>
+            <h2 className="text-lg font-bold leading-tight tracking-tight">ReDraft Premium</h2>
           </div>
           <div className="flex gap-8 text-sm text-on-surface-variant font-semibold uppercase tracking-wider">
             <Link className="hover:text-primary transition-colors" to="#">Archive</Link>
             <Link className="hover:text-primary transition-colors" to="#">Ethos</Link>
             <Link className="hover:text-primary transition-colors" to="#">Submissions</Link>
           </div>
-          <p className="text-[12px] font-mono text-on-surface-variant opacity-60 uppercase">© 2024 EVERDRAFT EDITORIAL. BUILT FOR FOCUS.</p>
+          <p className="text-[12px] font-mono text-on-surface-variant opacity-60 uppercase">© 2024 REDRAFT EDITORIAL. BUILT FOR FOCUS.</p>
         </div>
       </footer>
     </div>

@@ -6,8 +6,8 @@ import { useAuthStore } from '../store/authStore';
 
 const DashboardPage: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
-  const [search, setSearch] = useState('');
-  
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   const { data: posts, isLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchMyPosts,
@@ -34,10 +34,7 @@ const DashboardPage: React.FC = () => {
   };
 
   const filteredPosts = posts?.filter(post => {
-    const matchesFilter = filter === 'all' || post.status === filter;
-    const matchesSearch = post.currentVersion?.title?.toLowerCase().includes(search.toLowerCase()) || 
-                          post.title?.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return filter === 'all' || post.status === filter;
   });
 
   const stats = {
@@ -53,7 +50,7 @@ const DashboardPage: React.FC = () => {
       <header className="bg-surface border-b border-outline-variant fixed top-0 left-0 right-0 z-50 h-16">
         <div className="flex justify-between items-center w-full px-sm md:px-lg h-full max-w-7xl mx-auto">
           <div className="flex items-center gap-md">
-            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">EverDraft</Link>
+            <Link to="/blog" className="text-2xl font-bold text-primary tracking-tight">ReDraft</Link>
             <nav className="hidden md:flex items-center gap-md ml-lg">
               <Link to="/dashboard" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider">Dashboard</Link>
               <Link to="/editor/new" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">New Article</Link>
@@ -61,17 +58,7 @@ const DashboardPage: React.FC = () => {
             </nav>
           </div>
           <div className="flex items-center gap-sm">
-            <div className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-75">search</span>
-              <input 
-                className="bg-surface-container-low border border-outline-variant rounded-lg pl-9 pr-4 py-1.5 text-[13px] focus:outline-none focus:border-primary w-64 outline-none" 
-                placeholder="Search articles..." 
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <button 
+            <button
               onClick={handleLogout}
               className="p-2 text-on-surface-variant hover:text-error transition-colors"
               title="Logout"
@@ -88,58 +75,100 @@ const DashboardPage: React.FC = () => {
         </div>
       </header>
 
-      <div className="flex flex-1 pt-16">
+      <div className="flex-1 pt-16">
         {/* SideNavBar */}
-        <aside className="hidden lg:flex flex-col h-[calc(100vh-64px)] py-md bg-surface-container-low border-r border-outline-variant fixed left-0 w-[280px]">
-          <div className="px-md mb-lg">
+        <aside className={`hidden lg:flex flex-col h-[calc(100vh-64px)] py-md bg-surface-container-low border-r border-outline-variant fixed left-0 transition-all duration-300 ease-in-out z-40 ${sidebarCollapsed ? 'w-[72px]' : 'w-[280px]'}`}>
+          {/* Collapse/Expand Floating Button */}
+          <button 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="absolute right-[-14px] top-8 bg-surface-container border border-outline-variant hover:bg-primary hover:text-on-primary rounded-full w-7 h-7 flex items-center justify-center shadow-md transition-all z-50 text-on-surface-variant cursor-pointer"
+            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {sidebarCollapsed ? 'chevron_right' : 'chevron_left'}
+            </span>
+          </button>
+
+          <div className="px-md mb-lg overflow-hidden whitespace-nowrap">
             <div className="flex items-center gap-sm mb-xs">
-              <div className="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container">
+              <div className="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
                 <span className="material-symbols-outlined text-[20px]">edit_note</span>
               </div>
-              <div>
-                <h3 className="text-[13px] font-bold text-primary">EverDraft Editor</h3>
+              <div className={`${sidebarCollapsed ? 'opacity-0 w-0' : 'opacity-100'} transition-opacity duration-200 overflow-hidden`}>
+                <h3 className="text-[13px] font-bold text-primary">ReDraft Editor</h3>
                 <p className="text-[10px] text-on-surface-variant font-mono uppercase tracking-wider">V2.4.0 Running</p>
               </div>
             </div>
           </div>
-          <nav className="flex-grow space-y-1">
-            <button onClick={() => setFilter('all')} className={`flex items-center gap-sm w-[calc(100%-16px)] mx-2 px-4 py-3 rounded-lg transition-all active:scale-95 ${filter === 'all' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
-              <span className="material-symbols-outlined">dashboard</span>
-              <span className="text-[13px] font-semibold">All Articles</span>
+
+          <nav className="flex-grow space-y-1 overflow-y-auto overflow-x-hidden custom-scrollbar">
+            <button 
+              onClick={() => setFilter('all')} 
+              className={`flex items-center gap-sm rounded-lg transition-all active:scale-95 ${sidebarCollapsed ? 'justify-center w-10 h-10 mx-auto px-0' : 'w-[calc(100%-16px)] mx-2 px-4 py-3'} ${filter === 'all' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+              title={sidebarCollapsed ? "All Articles" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">dashboard</span>
+              <span className={`${sidebarCollapsed ? 'hidden' : 'text-[13px] font-semibold'}`}>All Articles</span>
             </button>
-            <button onClick={() => setFilter('published')} className={`flex items-center gap-sm w-[calc(100%-16px)] mx-2 px-4 py-3 rounded-lg transition-all active:scale-95 ${filter === 'published' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
-              <span className="material-symbols-outlined">verified</span>
-              <span className="text-[13px] font-semibold">Published</span>
+
+            <button 
+              onClick={() => setFilter('published')} 
+              className={`flex items-center gap-sm rounded-lg transition-all active:scale-95 ${sidebarCollapsed ? 'justify-center w-10 h-10 mx-auto px-0' : 'w-[calc(100%-16px)] mx-2 px-4 py-3'} ${filter === 'published' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+              title={sidebarCollapsed ? "Published" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">verified</span>
+              <span className={`${sidebarCollapsed ? 'hidden' : 'text-[13px] font-semibold'}`}>Published</span>
             </button>
-            <button onClick={() => setFilter('draft')} className={`flex items-center gap-sm w-[calc(100%-16px)] mx-2 px-4 py-3 rounded-lg transition-all active:scale-95 ${filter === 'draft' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
-              <span className="material-symbols-outlined">edit_note</span>
-              <span className="text-[13px] font-semibold">Drafts</span>
+
+            <button 
+              onClick={() => setFilter('draft')} 
+              className={`flex items-center gap-sm rounded-lg transition-all active:scale-95 ${sidebarCollapsed ? 'justify-center w-10 h-10 mx-auto px-0' : 'w-[calc(100%-16px)] mx-2 px-4 py-3'} ${filter === 'draft' ? 'bg-secondary-container text-on-secondary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}
+              title={sidebarCollapsed ? "Drafts" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">edit_note</span>
+              <span className={`${sidebarCollapsed ? 'hidden' : 'text-[13px] font-semibold'}`}>Drafts</span>
             </button>
           </nav>
-          <div className="mt-auto px-2 space-y-1 border-t border-outline-variant pt-md">
-            <Link to="/editor/new" className="w-full flex items-center justify-center gap-sm bg-primary text-on-primary py-3 rounded-lg text-[13px] font-bold mb-lg hover:opacity-90 transition-opacity">
-              Publish Version
+
+          <div className="mt-auto px-2 space-y-1 border-t border-outline-variant pt-md overflow-hidden">
+            <Link 
+              to="/editor/new" 
+              className={`flex items-center justify-center gap-sm bg-primary text-on-primary rounded-lg font-bold mb-lg hover:opacity-90 transition-opacity ${sidebarCollapsed ? 'w-10 h-10 mx-auto px-0' : 'w-full py-3 text-[13px]'}`}
+              title={sidebarCollapsed ? "Create New Article" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">add</span>
+              <span className={sidebarCollapsed ? 'hidden' : ''}>Create New</span>
             </Link>
-            <Link className="flex items-center gap-sm text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" to="#">
-              <span className="material-symbols-outlined">help</span>
-              <span className="text-[13px] font-semibold">Help</span>
+
+            <Link 
+              className={`flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg ${sidebarCollapsed ? 'justify-center w-10 h-10 mx-auto px-0' : 'px-4 py-3'}`} 
+              to="#"
+              title={sidebarCollapsed ? "Help" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">help</span>
+              <span className={`${sidebarCollapsed ? 'hidden' : 'text-[13px] font-semibold'}`}>Help</span>
             </Link>
-            <Link className="flex items-center gap-sm text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" to="#">
-              <span className="material-symbols-outlined">settings</span>
-              <span className="text-[13px] font-semibold">Settings</span>
+
+            <Link 
+              className={`flex items-center gap-sm text-on-surface-variant hover:bg-surface-container-high transition-all rounded-lg ${sidebarCollapsed ? 'justify-center w-10 h-10 mx-auto px-0' : 'px-4 py-3'}`} 
+              to="#"
+              title={sidebarCollapsed ? "Settings" : undefined}
+            >
+              <span className="material-symbols-outlined shrink-0">settings</span>
+              <span className={`${sidebarCollapsed ? 'hidden' : 'text-[13px] font-semibold'}`}>Settings</span>
             </Link>
           </div>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-grow lg:ml-[280px] w-full">
+        <main className={`flex-grow min-w-0 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[280px]'}`}>
           <div className="max-w-6xl mx-auto px-md py-lg lg:px-xl">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
-              <div>
+              <div className="flex-1">
                 <h1 className="text-[48px] font-bold tracking-tight text-primary mb-xs">Your Library</h1>
-                <p className="text-on-surface-variant max-w-xl">
-                  Manage your collective consciousness. Every draft, every revision, preserved with architectural permanence.
+                <p className="max-w-xl">
+                  Manage your articles and drafts. Every draft, every revision, preserved with architectural permanence.
                 </p>
               </div>
               <Link to="/editor/new" className="flex items-center justify-center gap-sm px-lg py-md bg-primary text-on-primary rounded-lg text-[13px] font-bold hover:opacity-90 transition-opacity shadow-sm">
@@ -228,9 +257,9 @@ const DashboardPage: React.FC = () => {
                               <Link to={`/editor/${post.id}`} className="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="Edit">
                                 <span className="material-symbols-outlined">edit</span>
                               </Link>
-                              <button 
+                              <button
                                 onClick={() => post.status === 'published' ? unpublishMutation.mutate(post.id) : publishMutation.mutate(post.id)}
-                                className={`p-2 rounded-lg transition-colors ${post.status === 'published' ? 'text-secondary hover:bg-secondary/10' : 'text-primary hover:bg-primary/10'}`} 
+                                className={`p-2 rounded-lg transition-colors ${post.status === 'published' ? 'text-secondary hover:bg-secondary/10' : 'text-primary hover:bg-primary/10'}`}
                                 title={post.status === 'published' ? 'Unpublish' : 'Publish'}
                               >
                                 <span className="material-symbols-outlined">{post.status === 'published' ? 'visibility_off' : 'publish'}</span>
@@ -250,23 +279,23 @@ const DashboardPage: React.FC = () => {
                 </table>
               </div>
             </div>
+            
+            {/* Footer inside the main content section to avoid sidebar overlap */}
+            <footer className="w-full py-lg flex flex-col md:flex-row justify-between items-center gap-sm bg-transparent border-t border-outline-variant/50 mt-xl">
+              <div className="flex flex-col md:flex-row items-center gap-md">
+                <span className="text-[13px] font-bold text-primary">ReDraft</span>
+                <span className="text-on-surface-variant text-[13px]">© 2024 ReDraft Publishing. Built for permanence.</span>
+              </div>
+              <div className="flex gap-md">
+                <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Terms</Link>
+                <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Privacy</Link>
+                <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Changelog</Link>
+                <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Support</Link>
+              </div>
+            </footer>
           </div>
         </main>
       </div>
-
-      {/* Footer */}
-      <footer className="w-full py-lg px-sm md:px-xl flex flex-col md:flex-row justify-between items-center gap-sm bg-surface-container-lowest border-t border-outline-variant mt-auto">
-        <div className="flex flex-col md:flex-row items-center gap-md">
-          <span className="text-[13px] font-bold text-primary">EverDraft</span>
-          <span className="text-on-surface-variant text-[13px]">© 2024 EverDraft Publishing. Built for permanence.</span>
-        </div>
-        <div className="flex gap-md">
-          <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Terms</Link>
-          <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Privacy</Link>
-          <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Changelog</Link>
-          <Link className="text-on-surface-variant hover:text-primary underline text-[13px]" to="#">Support</Link>
-        </div>
-      </footer>
     </div>
   );
 };

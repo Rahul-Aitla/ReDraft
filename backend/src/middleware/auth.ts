@@ -25,8 +25,19 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as AuthPayload;
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any;
+    
+    // Support both userId and id in payload for resilience
+    const userId = decoded.userId || decoded.id;
+    
+    if (!userId) {
+      throw new Error('Token payload missing user identifier');
+    }
+
+    req.user = {
+      ...decoded,
+      userId
+    };
     next();
   } catch (err) {
     res.status(401).json({
@@ -35,6 +46,33 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
         code: 'INVALID_TOKEN',
       },
     });
+  }
+}
+
+export function optionalAuthenticateToken(req: Request, _res: Response, next: NextFunction): void {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader?.split(' ')[1];
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default-secret') as any;
+    
+    // Support both userId and id in payload for resilience
+    const userId = decoded.userId || decoded.id;
+    
+    if (userId) {
+      req.user = {
+        ...decoded,
+        userId
+      };
+    }
+    next();
+  } catch (err) {
+    // For optional auth, we ignore invalid tokens and just don't set req.user
+    next();
   }
 }
 

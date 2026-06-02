@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticateToken, requireAuth } from '../middleware/auth';
+import { authenticateToken, requireAuth, optionalAuthenticateToken } from '../middleware/auth';
 import * as postController from '../controllers/postController';
 
 const router = Router();
@@ -7,7 +7,7 @@ const router = Router();
 // Auth required routes
 router.post('/', authenticateToken, requireAuth, postController.createPost);
 router.get('/', authenticateToken, requireAuth, postController.getMyPosts);
-router.get('/:id', postController.getPost);
+router.get('/:id', optionalAuthenticateToken, postController.getPost);
 router.patch('/:id', authenticateToken, requireAuth, postController.updatePost);
 router.patch('/:id/publish', authenticateToken, requireAuth, postController.publishPost);
 router.patch('/:id/unpublish', authenticateToken, requireAuth, postController.unpublishPost);

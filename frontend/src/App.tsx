@@ -33,14 +33,6 @@ const App: React.FC = () => {
             }
           />
           <Route
-            path="/editor/new"
-            element={
-              <AuthGuard>
-                <EditorPage />
-              </AuthGuard>
-            }
-          />
-          <Route
             path="/editor/:id"
             element={
               <AuthGuard>

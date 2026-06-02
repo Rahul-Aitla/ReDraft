@@ -1,4 +1,5 @@
 import { Post, PostVersion } from '../models';
+import { Op } from 'sequelize';
 import { extractText } from '../utils/tiptap';
 import { generateSlug, generateUniqueSlug } from '../utils/slug';
 import type { TipTapDoc } from '../types';
@@ -10,6 +11,10 @@ export async function createPost(
   excerpt: string | null,
   authorId: string
 ): Promise<{ post: Post; version: PostVersion }> {
+  if (!authorId) {
+    throw new AppError(401, 'AUTH_REQUIRED', 'Author ID is missing. Please re-login.');
+  }
+
   let slug = generateSlug(title);
   let slugTaken = await Post.findOne({ where: { slug } });
   let counter = 1;
@@ -34,6 +39,7 @@ export async function createPost(
     contentText,
     excerpt,
     authorId,
+    versionNumber: 1,
   });
 
   // Update post with current version
@@ -52,6 +58,10 @@ export async function updatePost(
     status?: 'draft' | 'published';
   }
 ): Promise<{ post: Post; version: PostVersion | null }> {
+  if (!userId) {
+    throw new AppError(401, 'AUTH_REQUIRED', 'User ID is missing. Please re-login.');
+  }
+
   const post = await Post.findByPk(postId);
   if (!post) {
     throw new AppError(404, 'POST_NOT_FOUND', 'Post not found');
@@ -63,9 +73,11 @@ export async function updatePost(
 
   let version: PostVersion | null = null;
 
-  // If content or title changed, create a new version
-  if (updates.content || updates.title) {
+  // If content, title, or excerpt changed, create a new version
+  if (updates.content || updates.title || updates.excerpt !== undefined) {
     const currentVersion = await PostVersion.findByPk(post.currentVersionId ?? undefined);
+    const nextVersionNumber = (currentVersion?.versionNumber || 0) + 1;
+
     const title = updates.title || currentVersion?.title || 'Untitled';
     const content = updates.content || currentVersion?.content || { type: 'doc', content: [] };
     const excerpt = updates.excerpt !== undefined ? updates.excerpt : currentVersion?.excerpt || null;
@@ -78,15 +90,20 @@ export async function updatePost(
       contentText,
       excerpt,
       authorId: userId,
+      versionNumber: nextVersionNumber,
     });
 
     // Update post's current version
     await post.update({ currentVersionId: version.id });
   }
 
-  // Update status if provided
+  // Update status and publishedAt if provided
   if (updates.status) {
-    await post.update({ status: updates.status });
+    const statusUpdate: any = { status: updates.status };
+    if (updates.status === 'published' && post.status !== 'published') {
+      statusUpdate.publishedAt = new Date();
+    }
+    await post.update(statusUpdate);
   }
 
   // Reload post to get updated data
@@ -105,7 +122,10 @@ export async function publishPost(postId: string, userId: string): Promise<Post>
     throw new AppError(403, 'FORBIDDEN', 'You can only publish your own posts');
   }
 
-  await post.update({ status: 'published' });
+  await post.update({ 
+    status: 'published',
+    publishedAt: post.publishedAt || new Date()
+  });
   return post;
 }
 
@@ -132,6 +152,12 @@ export async function getPostsByAuthor(userId: string): Promise<Post[]> {
 }
 
 export async function getPost(postId: string, userId?: string): Promise<Post> {
+  // Guard against non-UUID strings like "new" or "undefined"
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(postId)) {
+    throw new AppError(404, 'POST_NOT_FOUND', 'Invalid post ID format');
+  }
+
   const post = await Post.findByPk(postId, {
     include: [{ association: 'currentVersion' }],
   });
@@ -152,10 +178,21 @@ export async function getPost(postId: string, userId?: string): Promise<Post> {
   return post;
 }
 
-export async function getPostBySlug(slug: string): Promise<Post> {
+export async function getPostBySlug(slug: string, userId?: string): Promise<Post> {
   const post = await Post.findOne({
-    where: { slug, status: 'published' },
-    include: [{ association: 'currentVersion' }],
+    where: userId 
+      ? {
+          slug,
+          [Op.or]: [
+            { status: 'published' },
+            { authorId: userId }
+          ]
+        }
+      : { slug, status: 'published' },
+    include: [
+      { association: 'currentVersion' },
+      { association: 'author', attributes: ['id', 'name', 'email'] }
+    ],
   });
 
   if (!post) {
