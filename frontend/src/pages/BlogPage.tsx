@@ -7,6 +7,7 @@ import Logo from '../components/Logo';
 
 const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const token = useAuthStore((s) => s.token);
   
   const { data: posts, isLoading: isPostsLoading } = useQuery({
@@ -34,28 +35,37 @@ const BlogPage: React.FC = () => {
       {/* TopNavBar */}
       <nav className="bg-surface border-b border-outline-variant w-full h-16 z-50 sticky top-0">
         <div className="flex justify-between items-center w-full px-sm md:px-lg h-full max-w-7xl mx-auto">
-          <div className="flex items-center gap-md">
-            <Link to="/" className="flex items-center gap-xs text-xl sm:text-2xl font-bold text-primary tracking-tight">
-              <Logo className="size-5 sm:size-6 text-primary" />
-              <span>ReDraft</span>
+          <div className="flex items-center gap-md min-w-0">
+            <Link to="/" className={`flex items-center gap-xs text-xl sm:text-2xl font-bold text-primary tracking-tight transition-all duration-300 ${isSearchExpanded ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>
+              <Logo className="size-5 sm:size-6 text-primary shrink-0" />
+              <span className="truncate">ReDraft</span>
             </Link>
-            <div className="hidden sm:flex gap-md items-center">
-              <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
-              <Link to="/blog" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider">Browse</Link>
+            <div className={`hidden sm:flex gap-md items-center transition-all duration-300 ${isSearchExpanded ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>
+              <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider whitespace-nowrap">Dashboard</Link>
+              <Link to="/blog" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider whitespace-nowrap">Browse</Link>
             </div>
           </div>
-          <div className="flex items-center gap-sm">
-            <div className="relative flex-1 sm:flex-none">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] sm:text-[20px]">search</span>
+          <div className={`flex items-center gap-sm transition-all duration-300 ${isSearchExpanded ? 'flex-1 justify-end' : ''}`}>
+            <div className={`relative transition-all duration-300 ${isSearchExpanded ? 'w-full max-w-md' : 'w-10 sm:w-64'}`}>
+              <button 
+                onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                className={`material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] z-10 hover:text-primary transition-colors ${isSearchExpanded ? 'cursor-pointer' : 'cursor-pointer sm:pointer-events-none'}`}
+              >
+                {isSearchExpanded ? 'close' : 'search'}
+              </button>
               <input 
-                className="pl-9 sm:pl-10 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-full text-sm sm:text-base focus:ring-2 focus:ring-primary focus:border-primary w-full xs:w-40 sm:w-64 outline-none transition-all" 
+                className={`pl-10 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-full text-sm sm:text-base focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-300 ${isSearchExpanded ? 'w-full opacity-100' : 'w-10 sm:w-full opacity-0 sm:opacity-100 cursor-pointer sm:cursor-text'}`} 
                 type="text" 
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={handleSearchChange}
+                onFocus={() => setIsSearchExpanded(true)}
+                onBlur={() => {
+                  if (!searchQuery) setIsSearchExpanded(false);
+                }}
               />
             </div>
-            <div className="flex items-center gap-xs">
+            <div className={`flex items-center gap-xs transition-opacity duration-300 ${isSearchExpanded ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>
               <Link 
                 to={token ? "/dashboard" : "/login"} 
                 className="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"
