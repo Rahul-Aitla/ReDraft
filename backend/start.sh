@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# Run migrations
+# Run migrations using production config
 echo "Running migrations..."
-npm run db:migrate
+NODE_ENV=production npm run db:migrate
 
-# Run seeders (optional: only if you want demo data in production)
+# Run seeders using production config
 echo "Seeding database..."
-npm run db:seed
+NODE_ENV=production npm run db:seed
 
 # Start the application
 echo "Starting server..."
