@@ -4,7 +4,10 @@ ReDraft is a minimalist, professional CMS designed for authors who value version
 
 ## 🚀 Live Demo
 - **Frontend**: [https://redraft-frontend.vercel.app](https://redraft-frontend.vercel.app)
-- **Backend API**: [https://redraft-backend.onrender.com](https://redraft-backend.onrender.com)
+- **Backend API**: [https://redraft-a20q.onrender.com](https://redraft-a20q.onrender.com)
+- **Health Check**: [https://redraft-a20q.onrender.com/health](https://redraft-a20q.onrender.com/health)
+
+> **Note**: The backend is hosted on Render's free tier. If the service is inactive, the first request may take 20-50 seconds to spin up.
 
 ## 🔑 Seeded Credentials
 Use these accounts to explore the author dashboard:
