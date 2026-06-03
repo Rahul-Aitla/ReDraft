@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# DEBUG: Print current environment variables (masked)
+echo "🔍 Current Environment Check:"
+echo "NODE_ENV: $NODE_ENV"
+echo "DATABASE_URL is set: $(if [ -z "$DATABASE_URL" ]; then echo 'NO'; else echo 'YES'; fi)"
+
 # Prevent .env file from overriding system environment variables
 if [ -f .env ]; then
   mv .env .env.bak

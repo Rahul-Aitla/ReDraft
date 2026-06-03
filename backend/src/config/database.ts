@@ -9,9 +9,16 @@ export async function initializeDatabase(): Promise<Sequelize> {
     throw new Error('DATABASE_URL environment variable is not set');
   }
 
+  // Debug logging for production (masked)
+  if (process.env.NODE_ENV === 'production') {
+    const maskedUrl = databaseUrl.replace(/\/\/.*@/, '//****:****@');
+    console.log(`📡 Attempting connection to: ${maskedUrl}`);
+    console.log(`🌍 NODE_ENV: ${process.env.NODE_ENV}`);
+  }
+
   sequelize = new Sequelize(databaseUrl, {
     dialect: 'postgres',
-    logging: false,
+    logging: process.env.NODE_ENV === 'production' ? console.log : false,
     dialectOptions: process.env.NODE_ENV === 'production' ? {
       ssl: {
         require: true,
