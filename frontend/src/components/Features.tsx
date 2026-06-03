@@ -60,13 +60,13 @@
                                          <p className="text-foreground text-sm">Roll back to any earlier version. Restoring creates a new version — nothing in between is ever erased.</p> 
                                      </div> 
                                  </div> 
-                                 <div className="rounded-tl-(--radius) relative -mb-6 -mr-6 mt-6 h-fit border-l border-t border-zinc-200 p-6 py-6 sm:ml-6 bg-zinc-50/50"> 
+                                 <div className="rounded-tl-(--radius) relative -mb-6 -mr-6 mt-6 h-fit border-l border-t border-zinc-200 p-6 py-6 sm:ml-6 bg-zinc-50/50 overflow-hidden"> 
                                      <div className="absolute left-3 top-2 flex gap-1"> 
                                          <span className="block size-2 rounded-full border border-zinc-200 bg-white"></span> 
                                          <span className="block size-2 rounded-full border border-zinc-200 bg-white"></span> 
                                          <span className="block size-2 rounded-full border border-zinc-200 bg-white"></span> 
                                      </div> 
-                                     <div className="pt-4 space-y-2 font-mono text-xs text-muted-foreground"> 
+                                     <div className="pt-4 space-y-2 font-mono text-xs text-muted-foreground whitespace-nowrap"> 
                                          <div className="flex items-center gap-2"><span className="text-green-500">+</span><span className="line-through opacity-40">v3 — Draft update</span></div> 
                                          <div className="flex items-center gap-2"><span className="text-blue-500">↺</span><span>Restored from v1</span></div> 
                                          <div className="flex items-center gap-2"><span className="text-green-500">+</span><span>v4 — Auto snapshot</span></div> 
@@ -89,8 +89,8 @@
                                          <p className="text-foreground text-sm">Published posts are instantly live at /blog/:slug — readable by anyone, no login required.</p> 
                                      </div> 
                                  </div> 
-                                 <div className="relative mt-6 border-l border-zinc-200 sm:-my-6 sm:-mr-6 bg-zinc-50/50"> 
-                                     <div className="relative flex h-full flex-col justify-center space-y-6 py-6 px-4"> 
+                                 <div className="relative mt-6 border-l border-zinc-200 sm:-my-6 sm:-mr-6 bg-zinc-50/50 overflow-hidden"> 
+                                     <div className="relative flex h-full flex-col justify-center space-y-6 py-6 px-4 whitespace-nowrap"> 
                                          <div className="relative flex w-full items-center justify-end gap-2"> 
                                              <span className="block h-fit rounded border border-zinc-200 bg-white px-2 py-1 text-[10px] shadow-sm font-mono text-zinc-600">/blog/typescript-tips</span> 
                                          </div> 

@@ -33,6 +33,8 @@ const DiffPage: React.FC = () => {
     enabled: !!v1 && !!v2,
   });
 
+  const [activeMobileView, setActiveMobileView] = useState<'v1' | 'diff'>('diff');
+
   const syncScroll = (side: 'left' | 'right') => {
     if (isSyncing) return;
     setIsSyncing(true);
@@ -58,10 +60,10 @@ const DiffPage: React.FC = () => {
   return (
     <div className="bg-surface text-on-surface h-screen flex flex-col font-hanken overflow-hidden">
       {/* TopNavBar */}
-      <nav className="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-lg h-16 shrink-0 z-50">
+      <nav className="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-4 sm:px-lg h-16 shrink-0 z-50">
         <div className="flex items-center gap-md">
-          <Link to="/blog" className="flex items-center gap-xs text-2xl font-bold text-primary tracking-tight">
-            <Logo className="size-6 text-primary" />
+          <Link to="/" className="flex items-center gap-xs text-xl sm:text-2xl font-bold text-primary tracking-tight">
+            <Logo className="size-5 sm:size-6 text-primary" />
             <span>ReDraft</span>
           </Link>
           <div className="hidden md:flex gap-md items-center h-full ml-lg">
@@ -70,6 +72,9 @@ const DiffPage: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-sm">
+          <Link to="/dashboard" className="md:hidden p-2 text-on-surface-variant">
+            <span className="material-symbols-outlined">dashboard</span>
+          </Link>
           <div className="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
             JD
           </div>
@@ -77,59 +82,75 @@ const DiffPage: React.FC = () => {
       </nav>
 
       {/* Sub-Header: Comparison Stats & Actions */}
-      <header className="bg-surface-container-low border-b border-outline-variant px-lg py-sm flex justify-between items-center shrink-0">
-        <div className="flex items-center gap-md">
+      <header className="bg-surface-container-low border-b border-outline-variant px-4 sm:px-lg py-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-md">
           <div className="flex flex-col">
-            <span className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Comparing Versions</span>
+            <span className="text-[10px] sm:text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">Comparing Versions</span>
             <div className="flex items-center gap-xs mt-1">
-              <span className="font-mono text-[11px] px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded">V{versions?.find(v => v.id === v1)?.versionNumber || '?'}</span>
+              <span className="font-mono text-[10px] sm:text-[11px] px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded">V{versions?.find(v => v.id === v1)?.versionNumber || '?'}</span>
               <span className="material-symbols-outlined text-on-surface-variant text-[16px]">arrow_forward</span>
-              <span className="font-mono text-[11px] px-2 py-0.5 bg-primary-container text-on-primary-container rounded">V{versions?.find(v => v.id === v2)?.versionNumber || '?'}</span>
+              <span className="font-mono text-[10px] sm:text-[11px] px-2 py-0.5 bg-primary-container text-on-primary-container rounded">V{versions?.find(v => v.id === v2)?.versionNumber || '?'}</span>
             </div>
           </div>
           <div className="h-8 w-[1px] bg-outline-variant mx-sm hidden md:block"></div>
-          <div className="flex gap-md text-[13px] font-semibold">
+          <div className="flex gap-4 sm:gap-md text-[12px] sm:text-[13px] font-semibold">
             <div className="flex items-center gap-xs">
               <span className="w-2 h-2 rounded-full bg-green-600"></span>
-              <span className="text-on-surface-variant">{stats.additions} additions</span>
+              <span className="text-on-surface-variant whitespace-nowrap">{stats.additions} adds</span>
             </div>
             <div className="flex items-center gap-xs">
               <span className="w-2 h-2 rounded-full bg-red-600"></span>
-              <span className="text-on-surface-variant">{stats.deletions} deletions</span>
+              <span className="text-on-surface-variant whitespace-nowrap">{stats.deletions} dels</span>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-sm">
+        <div className="flex items-center gap-2">
           <button 
             onClick={() => navigate(`/editor/${id}`)}
-            className="px-md py-2 border border-outline text-primary text-[13px] font-bold rounded hover:bg-surface-container-high transition-all"
+            className="flex-1 sm:flex-none px-3 sm:px-md py-2 border border-outline text-primary text-[12px] sm:text-[13px] font-bold rounded hover:bg-surface-container-high transition-all"
           >
-            Cancel Comparison
+            Cancel
           </button>
-          <button className="px-md py-2 bg-primary text-on-primary text-[13px] font-bold rounded hover:opacity-90 transition-all shadow-sm">
-            Restore Selected
+          <button className="flex-1 sm:flex-none px-3 sm:px-md py-2 bg-primary text-on-primary text-[12px] sm:text-[13px] font-bold rounded hover:opacity-90 transition-all shadow-sm">
+            Restore
           </button>
         </div>
       </header>
+
+      {/* Mobile Toggle */}
+      <div className="sm:hidden flex bg-surface-container-low border-b border-outline-variant p-1 shrink-0">
+        <button 
+          onClick={() => setActiveMobileView('v1')}
+          className={`flex-1 py-2 text-[11px] font-bold rounded transition-all ${activeMobileView === 'v1' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant'}`}
+        >
+          VERSION {versions?.find(v => v.id === v1)?.versionNumber}
+        </button>
+        <button 
+          onClick={() => setActiveMobileView('diff')}
+          className={`flex-1 py-2 text-[11px] font-bold rounded transition-all ${activeMobileView === 'diff' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant'}`}
+        >
+          COMPARISON
+        </button>
+      </div>
 
       <div className="flex-1 flex overflow-hidden">
         {/* Main Diff Content */}
         <main className="flex-1 flex overflow-hidden bg-white">
           {/* Left Side: Version 1 */}
-          <section className="flex-1 flex flex-col border-r border-outline-variant overflow-hidden">
+          <section className={`flex-1 flex flex-col border-r border-outline-variant overflow-hidden ${activeMobileView === 'v1' ? 'flex' : 'hidden sm:flex'}`}>
             <div className="p-sm bg-surface-container-low border-b border-outline-variant flex justify-between items-center shrink-0">
-              <span className="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">
+              <span className="text-[10px] sm:text-[11px] font-bold text-on-surface-variant uppercase tracking-widest">
                 Version {versions?.find(v => v.id === v1)?.versionNumber} — {new Date(version1?.createdAt || '').toLocaleDateString()}
               </span>
             </div>
             <div 
               ref={leftCanvasRef}
               onScroll={() => syncScroll('left')}
-              className="flex-1 overflow-y-auto p-lg md:p-xl custom-scrollbar"
+              className="flex-1 overflow-y-auto p-6 sm:p-lg md:p-xl custom-scrollbar"
             >
               <div className="max-w-[720px] mx-auto">
-                <h1 className="text-[32px] font-bold text-primary mb-lg tracking-tight">{version1?.title}</h1>
-                <div className="text-[20px] leading-[32px] font-serif text-on-surface space-y-md">
+                <h1 className="text-[24px] sm:text-[32px] font-bold text-primary mb-6 sm:mb-lg tracking-tight">{version1?.title}</h1>
+                <div className="text-[18px] sm:text-[20px] leading-[28px] sm:leading-[32px] font-serif text-on-surface space-y-md">
                   <div className="whitespace-pre-wrap">
                     {version1?.contentText}
                   </div>
@@ -139,9 +160,9 @@ const DiffPage: React.FC = () => {
           </section>
 
           {/* Right Side: Version 2 (The Diff) */}
-          <section className="flex-1 flex flex-col overflow-hidden">
+          <section className={`flex-1 flex flex-col overflow-hidden ${activeMobileView === 'diff' ? 'flex' : 'hidden sm:flex'}`}>
             <div className="p-sm bg-surface-container-low border-b border-outline-variant flex justify-between items-center shrink-0">
-              <span className="text-[11px] font-bold text-primary uppercase tracking-widest">
+              <span className="text-[10px] sm:text-[11px] font-bold text-primary uppercase tracking-widest">
                 Version {versions?.find(v => v.id === v2)?.versionNumber} (Comparison)
               </span>
               <span className="text-[10px] font-bold text-primary bg-primary-fixed px-2 py-0.5 rounded">Active</span>
@@ -149,11 +170,11 @@ const DiffPage: React.FC = () => {
             <div 
               ref={rightCanvasRef}
               onScroll={() => syncScroll('right')}
-              className="flex-1 overflow-y-auto p-lg md:p-xl custom-scrollbar"
+              className="flex-1 overflow-y-auto p-6 sm:p-lg md:p-xl custom-scrollbar"
             >
               <div className="max-w-[720px] mx-auto">
-                <h1 className="text-[32px] font-bold text-primary mb-lg tracking-tight">{version2?.title}</h1>
-                <div className="text-[20px] leading-[32px] font-serif text-on-surface space-y-md">
+                <h1 className="text-[24px] sm:text-[32px] font-bold text-primary mb-6 sm:mb-lg tracking-tight">{version2?.title}</h1>
+                <div className="text-[18px] sm:text-[20px] leading-[28px] sm:leading-[32px] font-serif text-on-surface space-y-md">
                   <div className="whitespace-pre-wrap">
                     {diff?.map((segment, i) => (
                       <span 

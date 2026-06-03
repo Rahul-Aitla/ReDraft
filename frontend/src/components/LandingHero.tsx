@@ -46,9 +46,9 @@
            Write, version, and publish rich-text content. Every save is a snapshot. Nothing is ever lost. 
          </motion.p> 
  
-         <div className="flex flex-row justify-center space-x-4 items-center mt-10 sm:mt-16 md:mt-20 text-xs"> 
+         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-10 sm:mt-16 md:mt-20 text-xs w-full sm:w-auto"> 
            <motion.button 
-             className="sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight text-white bg-[#1A365D] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-3 rounded-full z-20 shadow-2xl cursor-pointer" 
+             className="w-full sm:w-auto sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight text-white bg-[#1A365D] px-6 py-3 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-3 rounded-full z-20 shadow-2xl cursor-pointer" 
              animate={{ opacity: 1, y: 0 }} 
              initial={{ opacity: 0, y: 20 }} 
              transition={{ duration: 0.2, ease: "easeOut", delay: 0.7 }} 
@@ -58,7 +58,7 @@
              Get started <span className="ml-1">→</span> 
            </motion.button> 
            <motion.button 
-             className="sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight text-[#1A365D] border border-[#1A365D] px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-3 rounded-full z-20 shadow-2xl cursor-pointer" 
+             className="w-full sm:w-auto sm:text-base md:text-lg lg:text-xl font-semibold tracking-tight text-[#1A365D] border border-[#1A365D] px-6 py-3 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-3 rounded-full z-20 shadow-2xl cursor-pointer" 
              animate={{ opacity: 1, y: 0 }} 
              initial={{ opacity: 0, y: 20 }} 
              transition={{ duration: 0.2, ease: "easeOut", delay: 0.7 }} 

@@ -276,48 +276,48 @@ const EditorPage: React.FC = () => {
       )}
 
       {/* Editor Header */}
-      <header className="h-16 border-b border-outline-variant bg-surface flex items-center justify-between px-md shrink-0">
-        <div className="flex items-center gap-md">
+      <header className="h-16 border-b border-outline-variant bg-surface flex items-center justify-between px-2 sm:px-md shrink-0">
+        <div className="flex items-center gap-1 sm:gap-md">
           <Link to="/dashboard" className="p-2 hover:bg-surface-container rounded-lg transition-colors text-on-surface-variant">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
-          <div className="h-6 w-[1px] bg-outline-variant"></div>
+          <div className="h-6 w-[1px] bg-outline-variant hidden xs:block"></div>
           <div className="flex items-center gap-xs">
-            <Logo className="size-4 text-primary mr-1" />
-            <span className="text-[13px] font-bold text-primary uppercase tracking-tight">ReDraft Editor</span>
+            <Logo className="size-4 text-primary mr-1 hidden xs:block" />
+            <span className="text-[13px] font-bold text-primary uppercase tracking-tight hidden sm:block">ReDraft Editor</span>
             <span className="text-[10px] font-mono text-on-surface-variant uppercase bg-surface-container px-1.5 rounded tracking-widest">
               {isNew ? 'New Draft' : `v${post?.currentVersion?.versionNumber || '1.0'}`}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-md">
+        <div className="flex items-center gap-1 sm:gap-md">
           {/* Save & Autosave Controls */}
-          <div className="flex items-center gap-sm mr-md border-r border-outline-variant/60 pr-md">
+          <div className="flex items-center gap-1 sm:gap-sm mr-1 sm:mr-md border-r border-outline-variant/60 pr-1 sm:pr-md">
             {/* Status Indicator */}
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-on-surface-variant uppercase tracking-widest mr-xs select-none">
               {saveStatus === 'saving' && (
                 <>
                   <span className="material-symbols-outlined animate-spin text-primary text-[14px]">progress_activity</span>
-                  <span>Saving...</span>
+                  <span className="hidden lg:inline">Saving...</span>
                 </>
               )}
               {saveStatus === 'saved' && (
                 <>
                   <span className="material-symbols-outlined text-[14px] text-green-600">cloud_done</span>
-                  <span>Saved</span>
+                  <span className="hidden lg:inline">Saved</span>
                 </>
               )}
               {saveStatus === 'unsaved' && (
                 <>
                   <span className="material-symbols-outlined text-[14px] text-amber-600">pending</span>
-                  <span>Unsaved</span>
+                  <span className="hidden lg:inline">Unsaved</span>
                 </>
               )}
               {saveStatus === 'error' && (
                 <>
                   <span className="material-symbols-outlined text-[14px] text-red-600">error</span>
-                  <span>Failed</span>
+                  <span className="hidden lg:inline">Failed</span>
                 </>
               )}
             </div>
@@ -326,7 +326,7 @@ const EditorPage: React.FC = () => {
             <button
               onClick={() => setIsAutosaveEnabled(!isAutosaveEnabled)}
               disabled={!!previewVersion}
-              className={`flex items-center gap-xs px-2.5 py-1.5 rounded-lg text-[12px] font-semibold transition-all border select-none cursor-pointer ${
+              className={`flex items-center gap-xs px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all border select-none cursor-pointer ${
                 isAutosaveEnabled 
                   ? 'bg-green-600/10 text-green-600 border-green-600/30' 
                   : 'text-on-surface-variant hover:bg-surface-container border-outline-variant/60'
@@ -336,33 +336,33 @@ const EditorPage: React.FC = () => {
               <span className="material-symbols-outlined text-[18px] leading-none">
                 {isAutosaveEnabled ? 'toggle_on' : 'toggle_off'}
               </span>
-              <span>Autosave</span>
+              <span className="hidden md:inline">Autosave</span>
             </button>
 
             {/* Manual Save Button */}
             <button
               onClick={handleManualSave}
               disabled={saveStatus === 'saving' || !!previewVersion || saveStatus === 'saved'}
-              className="flex items-center gap-xs px-3 py-1.5 bg-primary text-on-primary rounded-lg text-[12px] font-bold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm"
+              className="flex items-center gap-xs px-2 sm:px-3 py-1.5 bg-primary text-on-primary rounded-lg text-[12px] font-bold hover:bg-primary/95 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm"
               title="Save current draft"
             >
               <span className="material-symbols-outlined text-[18px]">save</span>
-              <span>Save</span>
+              <span className="hidden xs:inline">Save</span>
             </button>
           </div>
           
-          <div className="flex items-center gap-sm">
+          <div className="flex items-center gap-1 sm:gap-sm">
             <button 
               onClick={() => setShowHistory(!showHistory)}
-              className={`flex items-center gap-xs px-md py-2 rounded-lg text-[13px] font-bold transition-all ${showHistory ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
+              className={`flex items-center gap-xs px-2 sm:px-md py-2 rounded-lg text-[13px] font-bold transition-all ${showHistory ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'}`}
             >
               <span className="material-symbols-outlined text-[20px]">history</span>
-              <span className="hidden sm:inline">Timeline</span>
+              <span className="hidden lg:inline">Timeline</span>
             </button>
             <button 
               onClick={() => post?.status === 'published' ? unpublishMutation.mutate() : publishMutation.mutate()}
               disabled={isNew || publishMutation.isPending || unpublishMutation.isPending || !!previewVersion}
-              className={`flex items-center gap-xs px-md py-2 rounded-lg text-[13px] font-bold hover:opacity-90 transition-all disabled:opacity-50 ${
+              className={`flex items-center gap-xs px-2 sm:px-md py-2 rounded-lg text-[13px] font-bold hover:opacity-90 transition-all disabled:opacity-50 ${
                 post?.status === 'published' 
                   ? 'bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80' 
                   : 'bg-primary-container text-on-primary-container hover:bg-primary-container/80'
@@ -375,7 +375,7 @@ const EditorPage: React.FC = () => {
                     ? 'visibility_off' 
                     : 'publish'}
               </span>
-              <span className="hidden sm:inline">
+              <span className="hidden lg:inline">
                 {publishMutation.isPending 
                   ? 'Publishing...' 
                   : unpublishMutation.isPending 
@@ -385,7 +385,7 @@ const EditorPage: React.FC = () => {
                       : 'Publish'}
               </span>
             </button>
-            <div className="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-[11px] font-bold">
+            <div className="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant flex items-center justify-center text-[11px] font-bold hidden sm:flex">
               JD
             </div>
           </div>
@@ -401,11 +401,11 @@ const EditorPage: React.FC = () => {
             {/* Sticky Formatting Toolbar / Notice Banner */}
             <div className="sticky top-0 bg-surface-container-lowest/90 backdrop-blur-md border-b border-outline-variant/50 z-30 rounded-t-xl">
               {previewVersion ? (
-                <div className="w-full bg-primary/10 px-6 py-3 flex items-center justify-between animate-in fade-in duration-200">
+                <div className="w-full bg-primary/10 px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 animate-in fade-in duration-200">
                   <div className="flex items-center gap-xs">
                     <span className="material-symbols-outlined text-primary text-[18px]">history</span>
                     <span className="text-[12px] font-semibold text-primary">
-                      Viewing Version {previewVersion.versionNumber} (Read-Only Preview)
+                      Viewing Version {previewVersion.versionNumber}
                     </span>
                     <span className="text-[11px] text-on-surface-variant font-mono hidden md:inline ml-2">
                       ({new Date(previewVersion.createdAt).toLocaleString()})
@@ -428,7 +428,7 @@ const EditorPage: React.FC = () => {
                   </div>
                 </div>
               ) : isReadOnly ? (
-                <div className="w-full bg-secondary-container/20 px-6 py-3 flex items-center justify-between animate-in fade-in duration-200">
+                <div className="w-full bg-secondary-container/20 px-4 sm:px-6 py-3 flex items-center justify-between animate-in fade-in duration-200">
                   <div className="flex items-center gap-xs">
                     <span className="material-symbols-outlined text-secondary text-[18px]">visibility</span>
                     <span className="text-[12px] font-semibold text-secondary">
@@ -443,70 +443,70 @@ const EditorPage: React.FC = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center justify-between px-4 py-2 bg-surface-container-lowest">
+                <div className="flex items-center justify-between px-2 sm:px-4 py-2 bg-surface-container-lowest overflow-x-auto custom-scrollbar no-scrollbar">
                   {/* Formatting Buttons */}
-                  <div className="flex items-center gap-0.5 flex-wrap">
+                  <div className="flex items-center gap-0.5 flex-nowrap sm:flex-wrap">
                     <button
                       onClick={() => editor?.chain().focus().setParagraph().run()}
-                      className={`p-1.5 rounded transition-all ${editor?.isActive('paragraph') ? 'bg-primary/10 text-primary font-bold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`p-1.5 rounded transition-all shrink-0 ${editor?.isActive('paragraph') ? 'bg-primary/10 text-primary font-bold shadow-sm' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Paragraph"
                     >
                       <span className="material-symbols-outlined text-[18px]">format_paragraph</span>
                     </button>
 
-                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1"></div>
+                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1 shrink-0"></div>
 
                     <button
                       onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
-                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all ${editor?.isActive('heading', { level: 1 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all shrink-0 ${editor?.isActive('heading', { level: 1 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Heading 1"
                     >
                       H1
                     </button>
                     <button
                       onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
-                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all ${editor?.isActive('heading', { level: 2 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all shrink-0 ${editor?.isActive('heading', { level: 2 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Heading 2"
                     >
                       H2
                     </button>
                     <button
                       onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
-                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all ${editor?.isActive('heading', { level: 3 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`px-2 py-1 text-[11px] font-bold rounded transition-all shrink-0 ${editor?.isActive('heading', { level: 3 }) ? 'bg-primary/10 text-primary' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Heading 3"
                     >
                       H3
                     </button>
 
-                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1"></div>
+                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1 shrink-0"></div>
 
                     <button
                       onClick={() => editor?.chain().focus().toggleBold().run()}
-                      className={`p-1.5 rounded transition-all ${editor?.isActive('bold') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`p-1.5 rounded transition-all shrink-0 ${editor?.isActive('bold') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Bold"
                     >
                       <span className="material-symbols-outlined text-[18px]">format_bold</span>
                     </button>
                     <button
                       onClick={() => editor?.chain().focus().toggleItalic().run()}
-                      className={`p-1.5 rounded transition-all ${editor?.isActive('italic') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`p-1.5 rounded transition-all shrink-0 ${editor?.isActive('italic') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Italic"
                     >
                       <span className="material-symbols-outlined text-[18px]">format_italic</span>
                     </button>
 
-                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1"></div>
+                    <div className="h-4 w-[1px] bg-outline-variant/60 mx-1 shrink-0"></div>
 
                     <button
                       onClick={() => editor?.chain().focus().toggleBulletList().run()}
-                      className={`p-1.5 rounded transition-all ${editor?.isActive('bulletList') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`p-1.5 rounded transition-all shrink-0 ${editor?.isActive('bulletList') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Bullet List"
                     >
                       <span className="material-symbols-outlined text-[18px]">format_list_bulleted</span>
                     </button>
                     <button
                       onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-                      className={`p-1.5 rounded transition-all ${editor?.isActive('orderedList') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
+                      className={`p-1.5 rounded transition-all shrink-0 ${editor?.isActive('orderedList') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-primary'}`}
                       title="Numbered List"
                     >
                       <span className="material-symbols-outlined text-[18px]">format_list_numbered</span>
@@ -514,25 +514,25 @@ const EditorPage: React.FC = () => {
                   </div>
 
                   {/* Right-aligned Toolbar Controls */}
-                  <div className="flex items-center gap-sm">
+                  <div className="flex items-center gap-sm ml-2">
                     <button 
                       onClick={() => setIsReadOnly(true)}
-                      className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded transition-all"
+                      className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded transition-all shrink-0"
                       title="Enter Read-Only Mode"
                     >
                       <span className="material-symbols-outlined text-[18px]">visibility</span>
                     </button>
-                    <div className="h-4 w-[1px] bg-outline-variant/60"></div>
+                    <div className="h-4 w-[1px] bg-outline-variant/60 shrink-0"></div>
                     <div className="flex bg-surface-container-low p-0.5 rounded-lg text-xs font-bold shrink-0">
                       <button 
                         onClick={() => setActiveTab('visual')}
-                        className={`px-2.5 py-1 rounded-md transition-all ${activeTab === 'visual' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                        className={`px-2 py-1 sm:px-2.5 rounded-md transition-all ${activeTab === 'visual' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
                       >
                         Visual
                       </button>
                       <button 
                         onClick={() => setActiveTab('json')}
-                        className={`px-2.5 py-1 rounded-md transition-all ${activeTab === 'json' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
+                        className={`px-2 py-1 sm:px-2.5 rounded-md transition-all ${activeTab === 'json' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-primary'}`}
                       >
                         JSON
                       </button>
@@ -543,9 +543,9 @@ const EditorPage: React.FC = () => {
             </div>
 
             {/* Document Header (Title & Excerpt) */}
-            <div className="p-8 md:p-12 pb-0 flex-shrink-0">
+            <div className="p-6 sm:p-8 md:p-12 pb-0 flex-shrink-0">
               <input 
-                className="w-full text-[48px] font-bold tracking-tight text-primary placeholder:text-outline-variant focus:outline-none bg-transparent mb-6 border-none ring-0 disabled:opacity-70" 
+                className="w-full text-[32px] sm:text-[40px] md:text-[48px] font-bold tracking-tight text-primary placeholder:text-outline-variant focus:outline-none bg-transparent mb-4 sm:mb-6 border-none ring-0 disabled:opacity-70" 
                 placeholder="The Architectural Permanence..." 
                 type="text"
                 value={title}
@@ -553,26 +553,26 @@ const EditorPage: React.FC = () => {
                 disabled={isReadOnly || !!previewVersion}
               />
               <textarea 
-                className="w-full text-[24px] font-semibold text-on-surface-variant placeholder:text-outline-variant focus:outline-none bg-transparent resize-none h-auto border-none ring-0 min-h-[60px] disabled:opacity-70" 
+                className="w-full text-[18px] sm:text-[20px] md:text-[24px] font-semibold text-on-surface-variant placeholder:text-outline-variant focus:outline-none bg-transparent resize-none h-auto border-none ring-0 min-h-[60px] disabled:opacity-70" 
                 placeholder="An inquiry into the longevity of digital drafts and the philosophy of version control."
                 value={excerpt}
                 onChange={handleExcerptChange}
                 disabled={isReadOnly || !!previewVersion}
               />
-              <div className="h-1 w-12 bg-outline-variant my-8"></div>
+              <div className="h-1 w-12 bg-outline-variant my-6 sm:my-8"></div>
             </div>
 
             {/* Document Content View */}
             {activeTab === 'visual' ? (
-              <div className="p-8 md:p-12 pt-0 flex-grow">
+              <div className="p-6 sm:p-8 md:p-12 pt-0 flex-grow">
                 <EditorContent 
                   editor={editor} 
-                  className={`editor-surface text-[20px] leading-[32px] font-serif text-on-surface outline-none min-h-[400px] ${isReadOnly || !!previewVersion ? 'opacity-85' : ''}`} 
+                  className={`editor-surface text-[18px] sm:text-[20px] leading-[28px] sm:leading-[32px] font-serif text-on-surface outline-none min-h-[400px] ${isReadOnly || !!previewVersion ? 'opacity-85' : ''}`} 
                 />
               </div>
             ) : (
-              <div className="px-8 md:px-12 pb-12 flex-grow flex flex-col">
-                <div className="bg-tertiary-container text-on-tertiary-container rounded-xl p-6 font-mono text-[13px] relative overflow-hidden flex flex-col flex-1 border border-outline-variant/20 min-h-[400px]">
+              <div className="px-6 sm:px-8 md:px-12 pb-12 flex-grow flex flex-col">
+                <div className="bg-tertiary-container text-on-tertiary-container rounded-xl p-4 sm:p-6 font-mono text-[13px] relative overflow-hidden flex flex-col flex-1 border border-outline-variant/20 min-h-[400px]">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-[11px] uppercase tracking-wider font-bold text-on-tertiary-container/60">TipTap JSON Output</span>
                     <button 
@@ -583,7 +583,7 @@ const EditorPage: React.FC = () => {
                       className="px-3 py-1.5 bg-surface-container-lowest hover:bg-surface-container-high text-primary rounded-md text-[11px] font-bold transition-all shadow flex items-center gap-xs"
                     >
                       <span className="material-symbols-outlined text-[14px]">content_copy</span>
-                      Copy JSON
+                      <span className="hidden xs:inline">Copy JSON</span>
                     </button>
                   </div>
                   <pre className="whitespace-pre overflow-auto max-h-[500px] flex-1 leading-relaxed custom-scrollbar text-on-tertiary-container/90">
@@ -594,7 +594,7 @@ const EditorPage: React.FC = () => {
             )}
 
             {/* Document Footer */}
-            <footer className="px-12 py-6 border-t border-outline-variant/30 flex justify-between items-center bg-surface-container-low/30 rounded-b-xl">
+            <footer className="px-6 sm:px-12 py-6 border-t border-outline-variant/30 flex flex-col sm:row justify-between items-center gap-4 bg-surface-container-low/30 rounded-b-xl">
               <div className="flex gap-md text-[11px] font-mono text-on-surface-variant uppercase tracking-widest">
                 <span>Words: {editor?.storage.characterCount?.words() || 0}</span>
                 <span>Reading Time: {Math.ceil((editor?.storage.characterCount?.words() || 0) / 200)}m</span>
@@ -608,17 +608,32 @@ const EditorPage: React.FC = () => {
 
         {/* History Panel (Conditional) */}
         {showHistory && !isNew && (
-          <aside className="w-[320px] shrink-0 animate-in slide-in-from-right duration-300">
-            <HistoryPanel 
-              postId={id!} 
-              onRestore={handleRestore} 
-              onSelectPreview={handleSelectPreview}
+          <>
+            {/* Mobile Overlay Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[90] lg:hidden"
+              onClick={() => setShowHistory(false)}
             />
-          </aside>
+            <aside className="fixed lg:relative right-0 top-0 bottom-0 w-[300px] sm:w-[320px] bg-surface z-[100] lg:z-0 shadow-2xl lg:shadow-none border-l border-outline-variant shrink-0 animate-in slide-in-from-right duration-300">
+              <HistoryPanel 
+                postId={id!} 
+                onRestore={handleRestore} 
+                onSelectPreview={handleSelectPreview}
+                onClose={() => setShowHistory(false)}
+              />
+            </aside>
+          </>
         )}
       </div>
 
       <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
         .editor-surface .ProseMirror:focus {
           outline: none;
         }

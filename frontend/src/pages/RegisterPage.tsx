@@ -44,14 +44,14 @@ const RegisterPage: React.FC = () => {
         </Link>
       </nav>
 
-      <main className="flex-grow flex items-center justify-center p-md">
-        <div className="w-full max-w-[480px] space-y-lg animate-in fade-in duration-700 slide-in-from-bottom-4">
-          <div className="text-center space-y-xs">
-            <h1 className="text-[48px] font-bold leading-[56px] tracking-[-0.02em] text-primary">Join the craft</h1>
-            <p className="text-on-surface-variant max-w-sm mx-auto">Start drafting professionally with version-controlled precision and absolute focus.</p>
+      <main className="flex-grow flex items-center justify-center p-4 sm:p-md">
+        <div className="w-full max-w-[480px] space-y-8 sm:space-y-lg animate-in fade-in duration-700 slide-in-from-bottom-4">
+          <div className="text-center space-y-2 sm:space-y-xs">
+            <h1 className="text-[32px] sm:text-[40px] md:text-[48px] font-bold leading-tight sm:leading-[56px] tracking-[-0.02em] text-primary">Join the craft</h1>
+            <p className="text-on-surface-variant text-sm sm:text-base max-w-sm mx-auto">Start drafting professionally with version-controlled precision and absolute focus.</p>
           </div>
 
-          <div className="bg-surface-container-lowest shadow-[0_4px_40px_-10px_rgba(0,32,69,0.05)] rounded-xl p-lg border border-outline-variant/30">
+          <div className="bg-surface-container-lowest shadow-[0_4px_40px_-10px_rgba(0,32,69,0.05)] rounded-xl p-6 sm:p-lg border border-outline-variant/30">
             <form onSubmit={handleSubmit} className="space-y-md">
               {/* Full Name Input */}
               <div className="space-y-[4px]">

@@ -171,12 +171,12 @@ const DashboardPage: React.FC = () => {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-md mb-xl">
               <div className="flex-1">
-                <h1 className="text-[48px] font-bold tracking-tight text-primary mb-xs">Your Library</h1>
-                <p className="max-w-xl">
+                <h1 className="text-[32px] sm:text-[40px] md:text-[48px] font-bold tracking-tight text-primary mb-xs">Your Library</h1>
+                <p className="max-w-xl text-[14px] sm:text-base text-on-surface-variant">
                   Manage your articles and drafts. Every draft, every revision, preserved with architectural permanence.
                 </p>
               </div>
-              <Link to="/editor/new" className="flex items-center justify-center gap-sm px-lg py-md bg-primary text-on-primary rounded-lg text-[13px] font-bold hover:opacity-90 transition-opacity shadow-sm">
+              <Link to="/editor/new" className="flex items-center justify-center gap-sm px-lg py-3 sm:py-md bg-primary text-on-primary rounded-lg text-[13px] font-bold hover:opacity-90 transition-opacity shadow-sm">
                 <span className="material-symbols-outlined">add</span>
                 Create New Article
               </Link>
@@ -217,8 +217,8 @@ const DashboardPage: React.FC = () => {
                     <tr className="bg-surface-container-lowest border-b border-outline-variant">
                       <th className="px-lg py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider">Article Title</th>
                       <th className="px-md py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
-                      <th className="px-md py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider">Versions</th>
-                      <th className="px-md py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider">Last Edited</th>
+                      <th className="px-md py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider hidden sm:table-cell">Versions</th>
+                      <th className="px-md py-md text-[13px] font-bold text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Last Edited</th>
                       <th className="px-lg py-md text-right text-[13px] font-bold text-on-surface-variant uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
@@ -234,31 +234,31 @@ const DashboardPage: React.FC = () => {
                         <tr key={post.id} className="hover:bg-surface-container-low transition-colors group">
                           <td className="px-lg py-lg">
                             <div className="flex items-center gap-md">
-                              <div className="w-12 h-16 bg-surface-container-high rounded-sm flex-shrink-0 flex items-center justify-center overflow-hidden border border-outline-variant">
+                              <div className="w-12 h-16 bg-surface-container-high rounded-sm flex-shrink-0 hidden xs:flex items-center justify-center overflow-hidden border border-outline-variant">
                                 <span className="material-symbols-outlined text-outline-variant">description</span>
                               </div>
-                              <div>
-                                <Link to={`/editor/${post.id}`} className="text-base font-bold text-primary group-hover:underline">{post.currentVersion?.title || 'Untitled Article'}</Link>
+                              <div className="min-w-0">
+                                <Link to={`/editor/${post.id}`} className="text-base font-bold text-primary group-hover:underline truncate block">{post.currentVersion?.title || 'Untitled Article'}</Link>
                                 <p className="text-[13px] text-on-surface-variant mt-1 italic line-clamp-1">{post.currentVersion?.excerpt || 'No excerpt...'}</p>
                               </div>
                             </div>
                           </td>
                           <td className="px-md py-lg">
-                            <span className={`px-3 py-1 rounded-full text-[13px] font-bold ${post.status === 'published' ? 'bg-primary-container text-on-primary-container' : 'bg-secondary-container text-on-secondary-container'}`}>
+                            <span className={`px-2 sm:px-3 py-1 rounded-full text-[11px] sm:text-[13px] font-bold whitespace-nowrap ${post.status === 'published' ? 'bg-primary-container text-on-primary-container' : 'bg-secondary-container text-on-secondary-container'}`}>
                               {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
                             </span>
                           </td>
-                          <td className="px-md py-lg">
+                          <td className="px-md py-lg hidden sm:table-cell">
                             <div className="flex items-center gap-xs">
                               <span className="material-symbols-outlined text-sm text-primary">history</span>
                               <span className="text-[12px] font-mono text-primary font-bold">v{post.currentVersion?.versionNumber || 1}</span>
                             </div>
                           </td>
-                          <td className="px-md py-lg">
+                          <td className="px-md py-lg hidden md:table-cell">
                             <p className="text-[12px] font-mono text-on-surface-variant uppercase">{new Date(post.updatedAt).toLocaleDateString()}</p>
                           </td>
                           <td className="px-lg py-lg text-right">
-                            <div className="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-sm opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                               <Link to={`/editor/${post.id}`} className="p-2 hover:bg-surface-container-highest rounded-lg transition-colors text-on-surface-variant" title="Edit">
                                 <span className="material-symbols-outlined">edit</span>
                               </Link>

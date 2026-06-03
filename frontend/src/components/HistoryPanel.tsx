@@ -8,9 +8,10 @@ interface HistoryPanelProps {
   postId: string;
   onRestore: (post: Post) => void;
   onSelectPreview?: (version: PostVersion) => void;
+  onClose?: () => void;
 }
 
-const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelectPreview }) => {
+const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelectPreview, onClose }) => {
   const [selectedVersions, setSelectedVersions] = useState<string[]>([]);
   const [previewVersion, setPreviewVersion] = useState<PostVersion | null>(null);
   const [showDiff, setShowDiff] = useState(false);
@@ -62,7 +63,17 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelect
   return (
     <div className="flex flex-col h-full bg-surface border-l border-outline-variant font-hanken">
       <div className="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-        <h3 className="text-[13px] font-bold text-primary uppercase tracking-wider">Version History</h3>
+        <div className="flex items-center gap-2">
+          {onClose && (
+            <button 
+              onClick={onClose}
+              className="p-1 hover:bg-surface-container rounded-lg lg:hidden text-on-surface-variant"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          )}
+          <h3 className="text-[13px] font-bold text-primary uppercase tracking-wider">Version History</h3>
+        </div>
         <button 
           onClick={() => {
             if (selectedVersions.length === 2) setShowDiff(!showDiff);
@@ -127,14 +138,14 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelect
 
       {/* Diff Overlay / Section */}
       {showDiff && selectedVersions.length === 2 && (
-        <div className="p-md border-t border-outline-variant bg-surface-container-lowest animate-in slide-in-from-bottom duration-300">
-          <div className="flex justify-between items-center mb-3">
-            <h4 className="text-[11px] font-bold text-secondary uppercase tracking-widest">Comparison Result</h4>
+        <div className="p-3 sm:p-md border-t border-outline-variant bg-surface-container-lowest animate-in slide-in-from-bottom duration-300">
+          <div className="flex justify-between items-center mb-2 sm:mb-3">
+            <h4 className="text-[10px] sm:text-[11px] font-bold text-secondary uppercase tracking-widest">Comparison Result</h4>
             <button onClick={() => setShowDiff(false)} className="text-on-surface-variant hover:text-primary">
               <span className="material-symbols-outlined text-sm">close</span>
             </button>
           </div>
-          <div className="max-h-[200px] overflow-y-auto custom-scrollbar p-2 bg-surface rounded border border-outline-variant/30 text-xs font-mono leading-relaxed">
+          <div className="max-h-[150px] sm:max-h-[200px] overflow-y-auto custom-scrollbar p-2 bg-surface rounded border border-outline-variant/30 text-[11px] sm:text-xs font-mono leading-relaxed">
             {isDiffLoading ? (
               <div className="space-y-1">
                 <div className="h-3 skeleton rounded w-full"></div>
@@ -162,19 +173,19 @@ const HistoryPanel: React.FC<HistoryPanelProps> = ({ postId, onRestore, onSelect
 
       {/* Preview Modal */}
       {previewVersion && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 bg-black/40 backdrop-blur-sm">
-          <div className="bg-surface-container-lowest w-full max-w-2xl max-h-[80vh] overflow-y-auto p-12 relative shadow-2xl border border-outline-variant rounded-xl">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-8 bg-black/40 backdrop-blur-sm">
+          <div className="bg-surface-container-lowest w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 sm:p-12 relative shadow-2xl border border-outline-variant rounded-xl">
             <button 
               onClick={() => setPreviewVersion(null)}
-              className="absolute top-6 right-6 text-on-surface-variant hover:text-primary text-2xl"
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-on-surface-variant hover:text-primary text-2xl"
             >
               <span className="material-symbols-outlined">close</span>
             </button>
-            <h2 className="text-[32px] font-bold text-primary mb-2 tracking-tight leading-tight">{previewVersion.title}</h2>
-            <p className="text-[11px] font-mono uppercase tracking-widest text-on-surface-variant mb-10 pb-4 border-b border-outline-variant">
+            <h2 className="text-[24px] sm:text-[32px] font-bold text-primary mb-2 tracking-tight leading-tight">{previewVersion.title}</h2>
+            <p className="text-[10px] sm:text-[11px] font-mono uppercase tracking-widest text-on-surface-variant mb-6 sm:mb-10 pb-4 border-b border-outline-variant">
               Version Snapshot — {new Date(previewVersion.createdAt).toLocaleString()}
             </p>
-            <div className="prose prose-slate max-w-none text-[18px] leading-[32px] font-serif text-on-surface italic opacity-80">
+            <div className="prose prose-slate max-w-none text-[16px] sm:text-[18px] leading-[28px] sm:leading-[32px] font-serif text-on-surface italic opacity-80">
               {previewVersion.contentText}
             </div>
           </div>

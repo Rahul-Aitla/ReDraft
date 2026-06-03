@@ -43,15 +43,15 @@ const LoginPage: React.FC = () => {
         </Link>
       </nav>
 
-      <div className="relative flex h-auto w-full max-w-[480px] flex-col bg-surface-container-lowest shadow-[0_40px_100px_-20px_rgba(0,32,69,0.02)] border border-outline-variant rounded-xl p-lg md:p-xl overflow-hidden">
+      <div className="relative flex h-auto w-[calc(100%-32px)] sm:w-full max-w-[480px] flex-col bg-surface-container-lowest shadow-[0_40px_100px_-20px_rgba(0,32,69,0.02)] border border-outline-variant rounded-xl p-6 sm:p-lg md:p-xl overflow-hidden z-10">
         {/* Brand Identity Section */}
-        <div className="flex flex-col items-center gap-md mb-lg">
+        <div className="flex flex-col items-center gap-4 sm:gap-md mb-6 sm:mb-lg">
           <div className="text-primary">
-            <Logo className="size-10" />
+            <Logo className="size-8 sm:size-10" />
           </div>
           <div className="text-center">
-            <h1 className="text-3xl font-semibold tracking-tight text-on-surface mb-xs">Welcome back</h1>
-            <p className="text-on-surface-variant text-sm">Resume your drafting journey</p>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-on-surface mb-xs">Welcome back</h1>
+            <p className="text-on-surface-variant text-[13px] sm:text-sm">Resume your drafting journey</p>
           </div>
         </div>
 
@@ -134,7 +134,7 @@ const LoginPage: React.FC = () => {
       </div>
 
       {/* Decorative Element */}
-      <div className="fixed bottom-0 right-0 p-lg pointer-events-none select-none">
+      <div className="fixed bottom-0 right-0 p-lg pointer-events-none select-none hidden sm:block">
         <p className="font-serif italic text-on-surface-variant/5 text-[120px] leading-none text-right">
           draft.<br/>revise.<br/>perfect.
         </p>

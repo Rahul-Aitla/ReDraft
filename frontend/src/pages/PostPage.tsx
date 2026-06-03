@@ -129,76 +129,79 @@ const PostPage: React.FC = () => {
   return (
     <div className="bg-background text-on-background font-hanken antialiased min-h-screen flex flex-col">
       {/* Minimal Back Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant px-6 py-4">
-        <div className="max-w-screen-xl mx-auto flex items-center justify-between">
-          <Link className="flex items-center gap-2 text-primary hover:text-primary-container transition-colors text-[13px] font-semibold uppercase tracking-wider" to="/blog">
+      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant px-4 sm:px-6 py-4">
+        <div className="max-w-screen-xl mx-auto flex items-center justify-between gap-4">
+          <Link className="flex items-center gap-2 text-primary hover:text-primary-container transition-colors text-[11px] sm:text-[13px] font-semibold uppercase tracking-wider shrink-0" to="/blog">
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-            <span>Back to Editorial</span>
+            <span className="hidden xs:inline">Back to Editorial</span>
+            <span className="xs:hidden">Back</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-[12px] font-mono text-on-surface-variant uppercase tracking-widest">ReDraft // V2.4.1</span>
-            <div className="h-4 w-[1px] bg-outline-variant"></div>
-            <button className="bg-primary text-on-primary px-4 py-1.5 rounded text-[13px] font-semibold hover:bg-primary-container transition-all uppercase tracking-wider">
-              Follow Series
+          <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+            <span className="text-[10px] sm:text-[12px] font-mono text-on-surface-variant uppercase tracking-widest truncate hidden sm:block">ReDraft // V2.4.1</span>
+            <div className="h-4 w-[1px] bg-outline-variant hidden sm:block"></div>
+            <button className="bg-primary text-on-primary px-3 sm:px-4 py-1.5 rounded text-[11px] sm:text-[13px] font-semibold hover:bg-primary-container transition-all uppercase tracking-wider whitespace-nowrap">
+              Follow
             </button>
           </div>
         </div>
       </nav>
 
-      <main className="relative flex flex-col items-center pt-xl pb-xl px-4 flex-grow">
+      <main className="relative flex flex-col items-center pt-6 sm:pt-xl pb-12 sm:pb-xl px-4 flex-grow">
         {/* Main Article Container */}
         <article className="max-w-[720px] w-full bg-surface-container-lowest shadow-[0_40px_100px_-20px_rgba(0,32,69,0.02)] border border-outline-variant rounded-xl overflow-hidden">
           {/* Hero Header */}
-          <header className="p-8 md:p-12 border-b border-outline-variant bg-surface-bright">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[11px] font-bold rounded uppercase tracking-tighter">Editorial</span>
-              <span className="text-[12px] font-mono text-on-surface-variant">
+          <header className="p-6 sm:p-8 md:p-12 border-b border-outline-variant bg-surface-bright">
+            <div className="flex flex-wrap items-center gap-3 mb-4 sm:mb-6">
+              <span className="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[10px] sm:text-[11px] font-bold rounded uppercase tracking-tighter">Editorial</span>
+              <span className="text-[10px] sm:text-[12px] font-mono text-on-surface-variant">
                 {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
-                {' AT '}
-                {new Date(post.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toUpperCase()}
+                <span className="hidden sm:inline">{' AT '}
+                {new Date(post.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }).toUpperCase()}</span>
               </span>
             </div>
-            <h1 className="text-[48px] font-bold leading-tight tracking-tight text-primary mb-6">
+            <h1 className="text-[32px] sm:text-[40px] md:text-[48px] font-bold leading-tight tracking-tight text-primary mb-4 sm:mb-6">
               {post.currentVersion?.title || post.title}
             </h1>
-            <p className="text-[24px] font-semibold text-on-surface-variant mb-8 leading-relaxed font-hanken">
+            <p className="text-[18px] sm:text-[22px] md:text-[24px] font-semibold text-on-surface-variant mb-6 sm:mb-8 leading-relaxed font-hanken">
               {post.currentVersion?.excerpt || post.excerpt}
             </p>
-            <div className="flex items-center justify-between pt-8 border-t border-outline-variant">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-6 sm:pt-8 border-t border-outline-variant gap-6">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-                  <span className="material-symbols-outlined">person</span>
+                <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                  <span className="material-symbols-outlined text-[20px] sm:text-[24px]">person</span>
                 </div>
                 <div>
-                  <p className="font-bold text-primary">{post.author?.name || 'Author'}</p>
-                  <p className="text-[11px] text-on-surface-variant uppercase tracking-wider">Contributor</p>
+                  <p className="font-bold text-primary text-[14px] sm:text-base">{post.author?.name || 'Author'}</p>
+                  <p className="text-[10px] sm:text-[11px] text-on-surface-variant uppercase tracking-wider">Contributor</p>
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="p-2 hover:bg-surface-container rounded-full transition-colors">
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 p-2 hover:bg-surface-container rounded-lg transition-colors border border-outline sm:border-none">
                   <span className="material-symbols-outlined text-on-surface-variant">bookmark</span>
+                  <span className="sm:hidden text-[13px] font-semibold">Save</span>
                 </button>
-                <button className="p-2 hover:bg-surface-container rounded-full transition-colors">
+                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 p-2 hover:bg-surface-container rounded-lg transition-colors border border-outline sm:border-none">
                   <span className="material-symbols-outlined text-on-surface-variant">share</span>
+                  <span className="sm:hidden text-[13px] font-semibold">Share</span>
                 </button>
               </div>
             </div>
           </header>
 
           {/* Content Area */}
-          <div className="p-8 md:p-12 prose prose-slate max-w-none">
-            <EditorContent editor={editor} className="text-[20px] leading-[32px] font-serif text-on-surface" />
+          <div className="p-6 sm:p-8 md:p-12 prose prose-slate max-w-none">
+            <EditorContent editor={editor} className="text-[18px] sm:text-[20px] leading-[28px] sm:leading-[32px] font-serif text-on-surface" />
           </div>
 
           {/* Article Footer */}
-          <footer className="p-8 md:p-12 bg-surface-container-low border-t border-outline-variant">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="flex items-center gap-4">
-                <button className="flex items-center gap-2 bg-white border border-outline px-6 py-2 rounded text-primary hover:bg-primary hover:text-white transition-all font-bold">
+          <footer className="p-6 sm:p-8 md:p-12 bg-surface-container-low border-t border-outline-variant">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8">
+              <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white border border-outline px-6 py-2.5 rounded text-primary hover:bg-primary hover:text-white transition-all font-bold">
                   <span className="material-symbols-outlined">thumb_up</span>
                   <span>APPRAISE</span>
                 </button>
-                <button className="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+                <button className="w-full sm:w-auto flex items-center justify-center gap-2 text-on-surface-variant hover:text-primary transition-colors py-2">
                   <span className="material-symbols-outlined">chat_bubble</span>
                   <span>JOIN DISCUSSION</span>
                 </button>

@@ -35,22 +35,22 @@ const BlogPage: React.FC = () => {
       <nav className="bg-surface border-b border-outline-variant w-full h-16 z-50 sticky top-0">
         <div className="flex justify-between items-center w-full px-sm md:px-lg h-full max-w-7xl mx-auto">
           <div className="flex items-center gap-md">
-            <Link to="/blog" className="flex items-center gap-xs text-2xl font-bold text-primary tracking-tight">
-              <Logo className="size-6 text-primary" />
+            <Link to="/" className="flex items-center gap-xs text-xl sm:text-2xl font-bold text-primary tracking-tight">
+              <Logo className="size-5 sm:size-6 text-primary" />
               <span>ReDraft</span>
             </Link>
-            <div className="hidden md:flex gap-md items-center">
+            <div className="hidden sm:flex gap-md items-center">
               <Link to="/dashboard" className="text-on-surface-variant hover:text-primary transition-colors text-[13px] font-semibold uppercase tracking-wider">Dashboard</Link>
               <Link to="/blog" className="text-primary font-bold border-b-2 border-primary pb-1 text-[13px] uppercase tracking-wider">Browse</Link>
             </div>
           </div>
           <div className="flex items-center gap-sm">
-            <div className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+            <div className="relative flex-1 sm:flex-none">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] sm:text-[20px]">search</span>
               <input 
-                className="pl-10 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-full text-base focus:ring-2 focus:ring-primary focus:border-primary w-64 outline-none transition-all" 
+                className="pl-9 sm:pl-10 pr-4 py-1.5 bg-surface-container border border-outline-variant rounded-full text-sm sm:text-base focus:ring-2 focus:ring-primary focus:border-primary w-full xs:w-40 sm:w-64 outline-none transition-all" 
                 type="text" 
-                placeholder="Search articles..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
@@ -72,11 +72,11 @@ const BlogPage: React.FC = () => {
       <main className="flex-grow pt-lg pb-xl px-sm">
         <div className="max-w-[720px] mx-auto">
           {/* Search Results Header */}
-          <header className="mb-lg">
-            <p className="text-[13px] font-semibold text-secondary uppercase tracking-wider mb-xs">
+          <header className="mb-8 sm:mb-lg">
+            <p className="text-[11px] sm:text-[13px] font-semibold text-secondary uppercase tracking-wider mb-xs">
               {searchQuery.length >= 3 ? 'Search Results' : 'The Editorial'}
             </p>
-            <h1 className="text-[32px] font-bold tracking-tight text-primary leading-tight">
+            <h1 className="text-[28px] sm:text-[32px] font-bold tracking-tight text-primary leading-tight">
               {searchQuery.length >= 3 ? (
                 <>Results for "<span className="italic">{searchQuery}</span>"</>
               ) : (
@@ -116,7 +116,7 @@ const BlogPage: React.FC = () => {
                   <Link to={`/blog/${post.slug}`} className="absolute inset-0 z-10" />
                   <div className="flex flex-col gap-xs">
                     <div className="flex justify-between items-start">
-                      <h2 className="text-2xl font-bold text-primary group-hover:text-primary-container transition-colors leading-tight">
+                      <h2 className="text-xl sm:text-2xl font-bold text-primary group-hover:text-primary-container transition-colors leading-tight">
                         {searchQuery.length >= 3 ? (
                           <span dangerouslySetInnerHTML={{ 
                             __html: post.title.replace(
@@ -129,23 +129,23 @@ const BlogPage: React.FC = () => {
                         )}
                       </h2>
                     </div>
-                    <div className="flex items-center gap-xs text-[13px] font-semibold text-secondary">
+                    <div className="flex items-center gap-xs text-[11px] sm:text-[13px] font-semibold text-secondary flex-wrap">
                       <span>{post.author?.name || 'Author'}</span>
                       <span className="text-[8px]">•</span>
                       <span>
-                        {new Date(post.createdAt || post.updatedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                        {' at '}
-                        {new Date(post.createdAt || post.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                        {new Date(post.createdAt || post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        <span className="hidden xs:inline">{' at '}
+                        {new Date(post.createdAt || post.updatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
                       </span>
                     </div>
-                    <div className="mt-sm text-[18px] leading-[28px] font-serif text-on-surface-variant line-clamp-3">
+                    <div className="mt-sm text-[16px] sm:text-[18px] leading-[24px] sm:leading-[28px] font-serif text-on-surface-variant line-clamp-3">
                       {searchQuery.length >= 3 ? (
                         <div dangerouslySetInnerHTML={{ __html: post.headline }} className="search-highlight" />
                       ) : (
                         post.currentVersion?.excerpt || post.excerpt
                       )}
                     </div>
-                    <div className="mt-md flex items-center gap-xs text-primary font-bold text-[13px] opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-md flex items-center gap-xs text-primary font-bold text-[13px] sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       Read Full Article
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </div>
