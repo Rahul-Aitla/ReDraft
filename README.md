@@ -3,7 +3,7 @@
 ReDraft is a minimalist, professional CMS designed for authors who value version control, focus, and permanence. Built with Node.js, Express, PostgreSQL, and React.
 
 ## 🚀 Live Demo
-- **Frontend**: [https://redraft-frontend.vercel.app](https://redraft-frontend.vercel.app)
+- **Frontend**: [https://redraft-cms.vercel.app/](https://redraft-cms.vercel.app/)
 - **Backend API**: [https://redraft-a20q.onrender.com](https://redraft-a20q.onrender.com)
 - **Health Check**: [https://redraft-a20q.onrender.com/health](https://redraft-a20q.onrender.com/health)
 
