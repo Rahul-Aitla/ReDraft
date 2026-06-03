@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Force NODE_ENV to production
+export NODE_ENV=production
+
 # DEBUG: Print current environment variables (masked)
 echo "🔍 Current Environment Check:"
 echo "NODE_ENV: $NODE_ENV"
@@ -13,11 +16,11 @@ fi
 
 # Run migrations using production config
 echo "Running migrations..."
-NODE_ENV=production npm run db:migrate
+npm run db:migrate
 
 # Run seeders using production config
 echo "Seeding database..."
-NODE_ENV=production npm run db:seed
+npm run db:seed
 
 # Start the application
 echo "Starting server..."

@@ -18,7 +18,7 @@ export async function initializeDatabase(): Promise<Sequelize> {
 
   sequelize = new Sequelize(databaseUrl, {
     dialect: 'postgres',
-    logging: process.env.NODE_ENV === 'production' ? console.log : false,
+    logging: false,
     dialectOptions: process.env.NODE_ENV === 'production' ? {
       ssl: {
         require: true,
