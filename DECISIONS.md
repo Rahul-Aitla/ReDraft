@@ -1,48 +1,27 @@
-# Architectural Decisions
+# DECISIONS.md
 
-## 1. Rich Text Editor: Tiptap
-I chose **Tiptap** (based on ProseMirror) as the rich text editor.
-- **Why?** It is headless, meaning I have full control over the UI while leveraging a robust editing engine. It handles JSON serialization natively, which is crucial for our versioning and diffing requirements.
+## 1. Which rich text editor did you choose and why?
+I chose **Tiptap** (based on ProseMirror) as the rich text editor. It is headless, meaning I have full control over the UI while leveraging a robust editing engine. It handles JSON serialization natively, which is crucial for the versioning and diffing requirements. 
 
-## 2. Content Storage: JSON vs HTML
-Editor output is stored as **JSON (Tiptap's Doc format)** rather than HTML.
-- **Why?** JSON provides a structured, semantic representation of the content. This makes it easier to:
-  - Compute meaningful diffs without parsing raw HTML strings.
-  - Render the same content across different platforms (web, mobile, etc.) if needed.
-  - Sanitize and manipulate the document structure programmatically.
+## 2. Why store editor output as JSON rather than HTML?
+Editor output is stored as **Tiptap's JSON doc format** rather than HTML. JSON provides a structured, semantic representation of the content making it possible to compute meaningful diffs without parsing raw HTML strings, manipulate the document structure programmatically, and render content consistently across contexts. (Can display in better way)
+HTML conflates content and presentation, which makes it a poor format for anything beyond display.
 
-## 3. Versioning Strategy: Full Snapshots
-Every save creates a **full snapshot** of the post's title, content, and metadata in the `post_versions` table.
-- **Why?** 
-  - **Simplicity**: No complex logic is needed to reconstruct a version from deltas.
-  - **Performance**: Retrieving any version is a simple O(1) database query.
-  - **Tradeoff**: It uses more storage space than deltas, but given the relatively small size of text documents, the simplicity and speed outweigh the storage costs.
+## 3. How do you store versions — full snapshots or deltas — and what's the tradeoff?
+Every save creates a **full snapshot** of the post's title, content, and metadata in the `post_versions` table. 
+The tradeoff is higher storage usage compared to deltas, but for text documents this cost is negligible. 
+The benefit is significant: retrieving any version is a simple O(1) query with no reconstruction logic, and restoring a version is just copying a row (really faster).
 
-## 4. Diffing Logic: Backend Computation
-The diffing logic runs on the **Backend**.
-- **Why?** 
-  - **Centralized Logic**: The backend can handle the extraction of plain text from JSON and the diffing algorithm in a consistent way.
-  - **Payload Efficiency**: The frontend only receives the computed diff segments rather than two full document snapshots.
-  - **Complexity**: It keeps the frontend lightweight and focused on rendering.
+## 4. How do you diff the rich-text JSON, and where does that computation run?
+The diff runs on the **backend**. Both version snapshots are fetched from the database, plain text is extracted by walking the Tiptap JSON node tree, and a word-level diff is computed using the `diff` package. 
+The frontend receives a flat array of `{ type: 'insert' | 'delete' | 'equal', text: string }` segments and renders them as colored spans. This keeps the frontend stateless and the diff logic independently testable (really simple for frontend to render diff instead whole thing).
 
-## 5. Search: PostgreSQL Full-Text Search
-I used PostgreSQL's native **Full-Text Search (FTS)** capabilities.
-- **Why?** 
-  - **Native & Scalable**: No need for external services like Elasticsearch for a project of this scale.
-  - **Features**: It supports ranking (`ts_rank`), highlighting (`ts_headline`), and efficient indexing (`GIN` indexes on `tsvector`).
-  - **Consistency**: Keeping search within the primary database ensures data consistency and simplifies the stack.
+## 5. Where did you deploy, and what was the trickiest part of getting all three pieces live?
+The database is on **Supabase** (managed PostgreSQL), 
+the backend on **Railway** (Node.js), and 
+the frontend on **Vercel** (Vite/React). 
+The trickiest part was to connect supabase with render backend (backend was calling to direct IPv6 DB endpoint changed that to Supabase Transaction Pooler IPv4).
 
-## 6. Deployment: Supabase (PostgreSQL) + Vercel/Render
-- **Database**: Supabase was chosen for its managed PostgreSQL with built-in FTS support.
-- **Backend**: Deployed to Render/Railway (standard Node.js environments).
-- **Frontend**: Deployed to Vercel (optimized for Vite/React apps).
-- **Trickiest Part**: Coordinating the database migrations and environment variables across three different platforms to ensure the JWT authentication and search worked seamlessly in production.
-
-## 7. Future Improvements
-If I had more time, I would:
-- Implement **Deltas (OT/CRDT)** for more efficient storage and real-time collaboration.
-- Add **image upload** support with a dedicated storage provider (like AWS S3 or Supabase Storage).
-- Improve the **diff visualization** to handle structural changes (like table edits) more elegantly.
-
-## 8. Slug Generation and Uniqueness
-The current slug generation ensures uniqueness by relying on the `UNIQUE` constraint in the database. In cases where the same title might exist, a simple helper function would be implemented to append a numerical suffix (e.g., `my-post`, `my-post-2`, `my-post-3`) to ensure uniqueness. This approach is robust and user-friendly.
+## 6. One thing you would do differently with more time.
+1.Frontend can be made more better (UX and UI rendering)
+2.I would improve the diff engine to preserve rich-text structure and formatting changes directly from the editor JSON instead of comparing flattened text content.
