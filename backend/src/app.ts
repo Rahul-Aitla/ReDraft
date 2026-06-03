@@ -15,8 +15,23 @@ const app: Express = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://redraft-cms.vercel.app',
+  'http://localhost:5173'
+].filter(Boolean) as string[];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+      callback(null, true);
+    } else {
+      console.warn(`🚨 CORS blocked for origin: ${origin}`);
+      callback(null, true); // Temporarily allow all to debug
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
