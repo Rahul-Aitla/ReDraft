@@ -93,4 +93,4 @@ npm run dev
 
 ## 📄 Documentation
 - [DECISIONS.md](./DECISIONS.md): Architectural choices and rationale.
-- [assignment.md](./assignment.md): Project requirements.
+- [assignment.docx](./assignment.docx): Project requirements.
